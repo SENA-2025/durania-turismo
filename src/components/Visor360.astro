@@ -9,14 +9,10 @@ const { imageUrl, infoText } = Astro.props;
 const containerId = "visor360-" + Math.random().toString(36).substring(2, 9);
 ---
 
-<!-- Pannellum CSS & JS CDN -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
-<script is:inline src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
-
 <div class="w-full max-w-6xl mx-auto my-12 px-4">
     <!-- Contenedor del Visor -->
     <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-gray-200">
-        <div id={containerId} class="w-full h-[400px] md:h-[600px] bg-gray-300"></div>
+        <div id={containerId} class="w-full min-h-[500px] bg-gray-200 rounded-xl overflow-hidden visor360-container" data-panorama={imageUrl}></div>
         
         <!-- Badge flotante decorativo -->
         <div class="absolute top-6 right-6 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg flex items-center gap-2 z-10 pointer-events-none">
@@ -41,21 +37,37 @@ const containerId = "visor360-" + Math.random().toString(36).substring(2, 9);
     </div>
 </div>
 
-<script is:inline define:vars={{ containerId, imageUrl }}>
-    const initViewer = () => {
-        if (window.pannellum) {
-            window.pannellum.viewer(containerId, {
-                "type": "equirectangular",
-                "panorama": imageUrl,
-                "autoLoad": true
-            });
-        }
-    };
+<script is:inline>
+    (function() {
+        const initViewers = () => {
+            // Validación por si acaso
+            if (!window.pannellum) return;
 
-    // Inicializar el visor cuando el DOM esté listo
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initViewer);
-    } else {
-        initViewer();
-    }
+            // Buscamos todos los contenedores que aún no hayan sido inicializados
+            const containers = document.querySelectorAll('.visor360-container:not([data-initialized="true"])');
+            
+            containers.forEach(container => {
+                const imageUrl = container.getAttribute('data-panorama');
+                const containerId = container.getAttribute('id');
+                
+                if (imageUrl && containerId) {
+                    window.pannellum.viewer(containerId, {
+                        "type": "equirectangular",
+                        "panorama": imageUrl,
+                        "autoLoad": true
+                    });
+                    // Etiquetamos el div para evitar inicializarlo múltiples veces
+                    container.setAttribute('data-initialized', 'true');
+                }
+            });
+        };
+
+        // Al usar CDN global en el head, podemos confiar en window.onload
+        window.addEventListener('load', initViewers);
+        
+        // Ejecutar inmediatamente si la página ya había cargado por completo
+        if (document.readyState === 'complete') {
+            initViewers();
+        }
+    })();
 </script>
