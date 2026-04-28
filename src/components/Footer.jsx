@@ -37,9 +37,12 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <a href="#inicio" className="flex items-center gap-3 mb-5 group">
-              <div className="relative w-10 h-10">
-                <div className="absolute inset-0 bg-green-500 rounded-xl rotate-45 group-hover:rotate-12 transition-transform duration-300" />
-                <span className="relative z-10 flex items-center justify-center w-full h-full text-black font-black text-lg">D</span>
+              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg ring-1 ring-white/10 group-hover:ring-green-400/50 transition-all duration-300 flex-shrink-0">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/1/12/Flag_of_Durania_%28Norte_de_Santander%29.svg"
+                  alt="Bandera de Durania"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div>
                 <div className="font-serif font-bold text-white text-xl">Durania</div>

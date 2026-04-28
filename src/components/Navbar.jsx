@@ -105,14 +105,14 @@ export default function Navbar() {
       }`}>
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
 
-          {/* ── Logo ──
-           * El cuadro verde rotado 45° crea un rombo/diamante.
-           * En hover rota a 12° para dar dinamismo visual.
-           */}
+          {/* ── Logo — Bandera oficial de Durania (Wikimedia Commons, CC BY 3.0) ── */}
           <a href="#inicio" className="flex items-center gap-3 group">
-            <div className="relative w-9 h-9">
-              <div className="absolute inset-0 bg-green-500 rounded-xl rotate-45 group-hover:rotate-12 transition-transform duration-300" />
-              <span className="relative z-10 flex items-center justify-center w-full h-full text-black font-black text-base">D</span>
+            <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-lg ring-1 ring-white/20 group-hover:ring-green-400/60 transition-all duration-300 flex-shrink-0">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/1/12/Flag_of_Durania_%28Norte_de_Santander%29.svg"
+                alt="Bandera de Durania"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="leading-none">
               <div className="font-serif font-bold text-white text-lg">Durania</div>
