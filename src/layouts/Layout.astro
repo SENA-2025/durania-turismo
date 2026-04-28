@@ -10,7 +10,7 @@ const { title } = Astro.props;
 <html lang="es">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="Descubre la 'Perla de Norte de Santander' de forma inmersiva" />
+		<meta name="description" content="Descubre la 'Perla del Norte de Santander' de forma inmersiva" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
@@ -21,7 +21,7 @@ const { title } = Astro.props;
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
         <script is:inline src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 	</head>
-	<body class="bg-black h-screen w-screen overflow-hidden m-0 p-0 font-sans antialiased text-white">
+	<body class="bg-black h-screen w-screen overflow-hidden m-0 p-0 font-sans antialiased text-white selection:bg-[#10b981] selection:text-white">
         <slot />
 	</body>
 </html>
@@ -30,8 +30,4 @@ const { title } = Astro.props;
 	html, body {
 		font-family: 'Inter', system-ui, sans-serif;
 	}
-    /* Estilos personalizados para los hotspots de Pannellum, si se desean */
-    .pnlm-hotspot-base {
-        z-index: 10;
-    }
 </style>

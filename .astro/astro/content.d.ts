@@ -140,30 +140,61 @@ declare module 'astro:content' {
 	>;
 
 	type ContentEntryMap = {
-		"fichas_propiedades": Record<string, {
-  id: string;
-  slug: string;
+		"guias": {
+"laguna-del-indio.md": {
+	id: "laguna-del-indio.md";
+  slug: "laguna-del-indio";
   body: string;
-  collection: "fichas_propiedades";
-  data: InferEntrySchema<"fichas_propiedades">;
-  render(): Render[".md"];
-}>;
-"guias_viaje": Record<string, {
-  id: string;
-  slug: string;
+  collection: "guias";
+  data: InferEntrySchema<"guias">
+} & { render(): Render[".md"] };
+"rio-peralonso.md": {
+	id: "rio-peralonso.md";
+  slug: "rio-peralonso";
   body: string;
-  collection: "guias_viaje";
-  data: InferEntrySchema<"guias_viaje">;
-  render(): Render[".md"];
-}>;
-"secciones_informativas": Record<string, {
-  id: string;
-  slug: string;
+  collection: "guias";
+  data: InferEntrySchema<"guias">
+} & { render(): Render[".md"] };
+};
+"informativas": {
+"cultura-y-tradicion.md": {
+	id: "cultura-y-tradicion.md";
+  slug: "cultura-y-tradicion";
   body: string;
-  collection: "secciones_informativas";
-  data: InferEntrySchema<"secciones_informativas">;
-  render(): Render[".md"];
-}>;
+  collection: "informativas";
+  data: InferEntrySchema<"informativas">
+} & { render(): Render[".md"] };
+"historia-de-durania.md": {
+	id: "historia-de-durania.md";
+  slug: "historia-de-durania";
+  body: string;
+  collection: "informativas";
+  data: InferEntrySchema<"informativas">
+} & { render(): Render[".md"] };
+};
+"propiedades": {
+"cabana-el-remanso.md": {
+	id: "cabana-el-remanso.md";
+  slug: "cabana-el-remanso";
+  body: string;
+  collection: "propiedades";
+  data: InferEntrySchema<"propiedades">
+} & { render(): Render[".md"] };
+"finca-la-esmeralda.md": {
+	id: "finca-la-esmeralda.md";
+  slug: "finca-la-esmeralda";
+  body: string;
+  collection: "propiedades";
+  data: InferEntrySchema<"propiedades">
+} & { render(): Render[".md"] };
+"hacienda-villa-cafe.md": {
+	id: "hacienda-villa-cafe.md";
+  slug: "hacienda-villa-cafe";
+  body: string;
+  collection: "propiedades";
+  data: InferEntrySchema<"propiedades">
+} & { render(): Render[".md"] };
+};
 
 	};
 
@@ -173,5 +204,5 @@ declare module 'astro:content' {
 
 	type AnyEntryMap = ContentEntryMap & DataEntryMap;
 
-	export type ContentConfig = typeof import("../../src/content/config.js");
+	export type ContentConfig = typeof import("./../../src/content/config.js");
 }
