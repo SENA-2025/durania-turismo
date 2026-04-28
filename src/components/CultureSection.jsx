@@ -26,8 +26,8 @@ export default function CultureSection() {
           {/* Historia — big card */}
           <div className="lg:col-span-2 relative rounded-3xl overflow-hidden group" style={{ minHeight: '400px' }}>
             <img
-              src="https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=1000&q=85"
-              alt="Historia Durania"
+              src="/img/mural-historia.jpeg"
+              alt="Mural historia de Durania"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />

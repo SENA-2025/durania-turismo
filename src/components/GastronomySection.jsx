@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next'
 
 const images = [
-  'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&q=85',
-  'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=85',
-  'https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600&q=85',
-  'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=600&q=85',
-  'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=600&q=85',
-  'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=85',
+  'https://images.pexels.com/photos/539451/pexels-photo-539451.jpeg?w=600',        // Mute — sopa/caldo con hierbas
+  'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=85',           // Carnes a la Vara — costillas asadas
+  'https://images.pexels.com/photos/1624487/pexels-photo-1624487.jpeg?w=600',       // Cabrito Asado — carne asada con arroz
+  'https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?w=600',         // Café de Durania — taza de café latte
+  'https://images.pexels.com/photos/1638280/pexels-photo-1638280.jpeg?w=600',       // Miel y Productos Apícolas — miel en taza
+  'https://images.pexels.com/photos/262959/pexels-photo-262959.jpeg?w=600',         // Pescado de Río — pescado a la plancha
 ]
 
 export default function GastronomySection() {
