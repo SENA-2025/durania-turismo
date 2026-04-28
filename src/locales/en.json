@@ -1,0 +1,245 @@
+{
+  "nav": {
+    "home": "Home",
+    "nature": "Nature",
+    "gastronomy": "Gastronomy",
+    "apiculture": "Apitourism",
+    "agriculture": "Agriculture",
+    "culture": "Culture",
+    "events": "Events",
+    "lodging": "Lodging",
+    "realEstate": "Real Estate",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Durania",
+    "subtitle": "The Silver Cup",
+    "description": "Discover a natural paradise in the heart of Norte de Santander. Coffee, nature, culture and adventure await you.",
+    "cta": "Explore destinations",
+    "ctaContact": "Contact us"
+  },
+  "stats": {
+    "trails": "Trails",
+    "birds": "Bird species",
+    "altitude": "masl altitude",
+    "kmCucuta": "km from Cúcuta"
+  },
+  "sections": {
+    "nature": {
+      "title": "Nature & Adventure",
+      "subtitle": "Immerse yourself in the green landscapes, trails and water bodies that make Durania a unique destination.",
+      "hiking": {
+        "title": "Hiking",
+        "desc": "Walk paths surrounded by lush vegetation and stunning views of the Norte de Santander coffee landscape. Hire local guides for the full experience."
+      },
+      "birds": {
+        "title": "Bird Watching",
+        "desc": "Durania is a refuge for dozens of bird species. Its tropical climate and diverse vegetation make it an ideal destination for birdwatching lovers."
+      },
+      "rivers": {
+        "title": "Rivers & Pools",
+        "desc": "The Zulia River, streams La Lejía, La Ocarena and Coladera, along with the famous Pozo del Amor and Pozo de la Hamaca at Laguna de la Barca, offer refreshing aquatic experiences."
+      },
+      "lagoon": {
+        "title": "Laguna de la Barca",
+        "desc": "55 minutes from the central park, this lagoon is the municipality's natural treasure. Surrounded by mountains and nature, it's perfect for relaxation and adventure."
+      },
+      "waterfall": {
+        "title": "El Saladito Waterfall",
+        "desc": "An impressive waterfall of approximately 30 meters high located in the El Almendral village. A natural spectacle you cannot miss."
+      }
+    },
+    "gastronomy": {
+      "title": "Gastronomy",
+      "subtitle": "Durania's cuisine fuses traditional Santandereano flavors with fresh countryside ingredients.",
+      "items": [
+        {
+          "name": "Norte Santandereano Mute",
+          "desc": "Traditional soup prepared with corn, pork, giblets and local spices. The most emblematic dish of the region."
+        },
+        {
+          "name": "Carnes a la Vara",
+          "desc": "Meats slowly roasted over embers on a wooden spit, an ancestral technique that preserves all the juices and flavors."
+        },
+        {
+          "name": "Roasted Goat",
+          "desc": "Local goat, raised on natural pastures, is a delicacy that reflects the livestock wealth of the municipality."
+        },
+        {
+          "name": "Durania Coffee",
+          "desc": "Coffee grown on mountain slopes, with unmatched aroma and flavor. The reason Durania was called 'The Silver Cup'."
+        },
+        {
+          "name": "Honey & Bee Products",
+          "desc": "Pure locally harvested honey, along with pollen and propolis, direct products from Durania's beehives."
+        },
+        {
+          "name": "River Fish",
+          "desc": "Fresh fish from the Zulia River and local streams, prepared with traditional peasant cuisine recipes."
+        }
+      ]
+    },
+    "apiculture": {
+      "title": "Apiculture & Apitourism",
+      "subtitle": "Live the unique experience of becoming a Guardian of the Bees and discover the fascinating world of honey.",
+      "what": {
+        "title": "What is Apitourism?",
+        "desc": "Apitourism is one of the most sustainable forms of tourism. It combines knowledge of the bee world, the practice of beekeeping and its vital role in biodiversity, with local gastronomic experiences and direct contact with nature."
+      },
+      "tour": {
+        "title": "Day Tour",
+        "desc": "From Cúcuta (47 km), departing at 6:30 AM from Parque Colón. Includes specialized transport, typical lunch, full protective equipment and apicultural kit with honey as a gift.",
+        "price": "Adult: $145,000 COP",
+        "priceKid": "Children (5-9 years): $130,000 COP"
+      },
+      "includes": "Tour includes",
+      "includesList": [
+        "Access to the beehives",
+        "Protective equipment (overalls, boots, mask, gloves)",
+        "Specialized apitourism guide",
+        "Apiculture kit with honey (143g) and dried fruits",
+        "Educational workshop on honeys and hive products",
+        "'Guardian of the Bees' certificate",
+        "Urban tour of Durania",
+        "Travel insurance"
+      ]
+    },
+    "agriculture": {
+      "title": "Countryside & Agriculture",
+      "subtitle": "Discover the agricultural wealth that sustains and gives identity to the municipality of Durania.",
+      "items": [
+        {
+          "title": "Coffee Growing",
+          "desc": "Coffee is the soul of Durania. Visit coffee farms, learn about the collection, processing and roasting of mountain coffee."
+        },
+        {
+          "title": "Livestock",
+          "desc": "Cattle and goat farming is an economic pillar. Goat and dairy products are a reflection of this productive tradition."
+        },
+        {
+          "title": "Fish Farming",
+          "desc": "Fish cultivation in natural ponds. Visit fish farms and enjoy the freshest fish directly from the source."
+        },
+        {
+          "title": "Agrotourism Farms",
+          "desc": "Experience rural life: harvest fruits, learn about crops and enjoy campesino hospitality on local farms."
+        }
+      ]
+    },
+    "culture": {
+      "title": "Culture & History",
+      "subtitle": "Durania holds centuries of history, from indigenous peoples to the traditions preserved today.",
+      "history": {
+        "title": "Municipal History",
+        "desc": "Durania was originally inhabited by the Oporomas tribe, a result of Karib-Chibcha mixing. The municipality's name honors General Justo Leónidas Durán, a 19th century liberal revolutionary. It was known as 'The Silver Cup' for its coffee production boom."
+      },
+      "sites": {
+        "title": "Historic Sites",
+        "list": [
+          "Parque Principal Justo Leónidas Durán",
+          "Basílica San José",
+          "Casa de la Cultura (Casa del General Rafael Leal)",
+          "Escalinatas with Simon Bolívar statue",
+          "Virgen del Carmen Monument (3 km from center)",
+          "Olympic Swimming Pool (built 1937-1940)"
+        ]
+      },
+      "traditions": {
+        "title": "Traditions",
+        "desc": "Duranenses are known for their hospitality, joy and pride in their roots. The San Nicolás patron saint festivals, vallenata and carranguera music, and local crafts are living parts of their cultural identity."
+      }
+    },
+    "events": {
+      "title": "Fairs & Events",
+      "subtitle": "The municipality of Durania celebrates year-round with fairs, festivities and events that bring the entire community together.",
+      "items": [
+        {
+          "month": "December",
+          "title": "San Nicolás Festival",
+          "desc": "Patron saint celebrations honoring San Nicolás. Music, dancing, gastronomy and cultural events that fill the streets of the municipality with life."
+        },
+        {
+          "month": "Year-round",
+          "title": "Agricultural Fair",
+          "desc": "Exhibition and sale of local agricultural products: coffee, honey, fruits, vegetables and crafts made by the region's farmers."
+        },
+        {
+          "month": "June",
+          "title": "Apitourism Festival",
+          "desc": "Celebration of the bee world with demonstrations, honey tastings, educational workshops and special tours to the region's apiaries."
+        },
+        {
+          "month": "Season",
+          "title": "Coffee Harvest",
+          "desc": "During harvest season, farms open their doors for visitors to participate in coffee bean collection."
+        }
+      ]
+    },
+    "lodging": {
+      "title": "Lodging",
+      "subtitle": "Find the perfect place to rest in Durania, from rural farms to traditional inns.",
+      "types": [
+        {
+          "title": "Tourist Farms",
+          "desc": "Stay on farms surrounded by nature, with country breakfast included, hammocks and views of the coffee landscape."
+        },
+        {
+          "title": "Country Inns",
+          "desc": "Family accommodation in the heart of the municipality, with traditional cuisine and personalized attention from local hosts."
+        },
+        {
+          "title": "Mountain Cabins",
+          "desc": "Rustic cabins in the midst of nature, perfect for disconnecting and enjoying the silence and country breeze."
+        },
+        {
+          "title": "Hotels in Town",
+          "desc": "Simple and comfortable hotels in the municipal center, close to historic sites and the main park."
+        }
+      ],
+      "contact": "For bookings and availability, contact us directly."
+    },
+    "realEstate": {
+      "title": "Real Estate",
+      "subtitle": "Durania is the ideal place to live, invest or have your retreat farm in the midst of nature.",
+      "types": [
+        {
+          "title": "Farms for Sale",
+          "desc": "Rural properties with arable land, water sources and panoramic views. Ideal for agribusiness or rural tourism."
+        },
+        {
+          "title": "Farms for Rent",
+          "desc": "Farm rentals by season or permanent for families, groups or entrepreneurs in the tourism sector."
+        },
+        {
+          "title": "Rural Lots",
+          "desc": "Lots with deeds in high-potential areas for building country homes or ecotourism projects."
+        },
+        {
+          "title": "Country Houses",
+          "desc": "Homes built in rural areas, with designs that integrate regional architecture into the natural environment."
+        }
+      ],
+      "cta": "For information on available properties, contact us."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "subtitle": "Plan your visit to Durania. We are ready to help you live the best experience.",
+      "address": "Durania, Norte de Santander, Colombia",
+      "phone": "Phone",
+      "email": "Email",
+      "hours": "Monday to Friday: 8:00 AM - 5:00 PM",
+      "form": {
+        "name": "Your name",
+        "email": "Your email",
+        "message": "How can we help you?",
+        "send": "Send message"
+      },
+      "social": "Follow us on social media"
+    }
+  },
+  "footer": {
+    "tagline": "The Silver Cup of Norte de Santander",
+    "rights": "All rights reserved",
+    "madeWith": "Made with love from Durania"
+  }
+}
