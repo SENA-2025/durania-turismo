@@ -333,7 +333,7 @@ La sección de inmobiliario conecta a compradores potenciales de fincas y lotes 
 
 ## 👨‍💻 Desarrollo
 
-Desarrollado con Claude Code — Anthropic AI.  
+Desarrollado por **Jose Santiago Duarte Duarte**.  
 Información turística investigada de fuentes oficiales colombianas.
 
 ```
