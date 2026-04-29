@@ -24,7 +24,7 @@ const cards = [
   {
     key: 'lagoon',
     icon: Droplets,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Arroyo_La_Barca-Durania%2C_Norte_de_Santander.jpg/800px-Arroyo_La_Barca-Durania%2C_Norte_de_Santander.jpg',
+    image: 'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?w=800',
     accent: '#34d399',
   },
   {
