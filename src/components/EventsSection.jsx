@@ -4,7 +4,7 @@ import { Calendar } from 'lucide-react'
 const images = [
   'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=700&q=85',
   'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=85',
-  'https://images.unsplash.com/photo-1471943038391-0c3a2a8f7f5d?w=700&q=85',
+  'https://images.pexels.com/photos/5247943/pexels-photo-5247943.jpeg?w=700',
   'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=700&q=85',
 ]
 const accents = ['#f87171','#4ade80','#fbbf24','#34d399']

@@ -52,7 +52,7 @@ export default function Stats() {
   const { t } = useTranslation()
 
   return (
-    <section className="bg-[#0a0a0a] py-6 border-y border-white/5">
+    <section className="bg-[#0a0a0a] py-6 border-y border-white/5 mt-4">
 
       {/* ── Marquee de categorías ─────────────────────────────────────────────
        * Contenedor con overflow-hidden para clipear el contenido animado.

@@ -71,7 +71,7 @@ const slides = [
     label: 'Naturaleza Viva',
   },
   {
-    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Arroyo_La_Barca-Durania%2C_Norte_de_Santander.jpg/1280px-Arroyo_La_Barca-Durania%2C_Norte_de_Santander.jpg',
+    img: 'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?w=1920',
     label: 'Laguna La Barca', // Foto real de Durania (Wikimedia Commons)
   },
   {
@@ -173,7 +173,7 @@ export default function Hero() {
       </div>
 
       {/* ── Badge de ubicación del slide actual ─────────────────────────── */}
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 z-20">
+      <div className="absolute top-24 left-1/2 -translate-x-1/2 z-20">
         <span className="glass pill text-white/70 text-xs">
           <MapPin className="w-3 h-3 text-green-400" />
           {slides[current].label} · Durania, Norte de Santander

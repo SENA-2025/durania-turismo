@@ -2,10 +2,10 @@ import { useTranslation } from 'react-i18next'
 import { ArrowUpRight } from 'lucide-react'
 
 const images = [
-  'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=700&q=85',
-  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=85',
-  'https://images.unsplash.com/photo-1475855581690-80accde3ae2b?w=700&q=85',
-  'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=700&q=85',
+  'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?w=700',   // Fincas Turísticas
+  'https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?w=700',     // Posadas Campestres
+  'https://images.pexels.com/photos/803975/pexels-photo-803975.jpeg?w=700',     // Cabañas en la Montaña
+  'https://images.pexels.com/photos/2462015/pexels-photo-2462015.jpeg?w=700',   // Hoteles Casco Urbano
 ]
 
 export default function LodgingSection() {

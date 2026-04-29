@@ -124,12 +124,12 @@ export default function Navbar() {
            * Solo visible en pantallas xl (≥1280px).
            * Cada link tiene una línea verde animada debajo (scale-x 0→1 en hover).
            */}
-          <div className="hidden xl:flex items-center gap-1">
+          <div className="hidden xl:flex items-center gap-0">
             {navLinks.map(link => (
               <a
                 key={link.key}
                 href={link.href}
-                className="relative px-3 py-2 text-sm text-white/60 hover:text-white transition-colors duration-200 group"
+                className="relative px-2 py-2 text-xs text-white/60 hover:text-white transition-colors duration-200 group"
               >
                 {t(`nav.${link.key}`)}
                 {/* Línea subrayada animada: scaleX 0 → 1 en hover */}
