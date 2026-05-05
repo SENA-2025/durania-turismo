@@ -18,7 +18,7 @@ const cards = [
   {
     key: 'rivers',
     icon: Waves,
-    image: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=85',
+    image: 'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?w=800',
     accent: '#60a5fa',
   },
   {
@@ -30,7 +30,7 @@ const cards = [
   {
     key: 'waterfall',
     icon: CloudRain,
-    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=85',
+    image: 'https://images.pexels.com/photos/2743287/pexels-photo-2743287.jpeg?w=800',
     accent: '#a78bfa',
   },
 ]

@@ -75,7 +75,7 @@ const slides = [
     label: 'Laguna La Barca', // Foto real de Durania (Wikimedia Commons)
   },
   {
-    img: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1920&q=90',
+    img: 'https://images.pexels.com/photos/1770809/pexels-photo-1770809.jpeg?w=1920',
     label: 'Tierra Cafetera',
   },
 ]
