@@ -1,0 +1,245 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "nature": "Naturaleza",
+    "gastronomy": "Gastronomía",
+    "apiculture": "Apiturismo",
+    "agriculture": "Agricultura",
+    "culture": "Cultura",
+    "events": "Ferias",
+    "lodging": "Hospedaje",
+    "realEstate": "Inmobiliario",
+    "contact": "Contacto"
+  },
+  "hero": {
+    "title": "Durania",
+    "subtitle": "La Tacita de Plata",
+    "description": "Descubre un paraíso natural en el corazón de Norte de Santander. Café, naturaleza, cultura y aventura te esperan.",
+    "cta": "Explorar destinos",
+    "ctaContact": "Contáctanos"
+  },
+  "stats": {
+    "trails": "Senderos",
+    "birds": "Especies de aves",
+    "altitude": "msnm altitud",
+    "kmCucuta": "km de Cúcuta"
+  },
+  "sections": {
+    "nature": {
+      "title": "Naturaleza y Aventura",
+      "subtitle": "Sumérgete en los paisajes verdes, senderos y cuerpos de agua que hacen de Durania un destino único.",
+      "hiking": {
+        "title": "Senderismo",
+        "desc": "Recorre caminos rodeados de vegetación exuberante y vistas impresionantes del paisaje cafetero norte santandereano. Contrata guías locales para vivir la experiencia completa."
+      },
+      "birds": {
+        "title": "Avistamiento de Aves",
+        "desc": "Durania es un refugio para decenas de especies de aves. Su clima tropical y vegetación diversa lo convierten en un destino ideal para los amantes del aviturismo."
+      },
+      "rivers": {
+        "title": "Ríos y Pozos",
+        "desc": "El río Zulia, quebradas La Lejía, La Ocarena y la Coladera, junto al famoso Pozo del Amor y Pozo de la Hamaca en la Laguna de la Barca, ofrecen refrescantes experiencias acuáticas."
+      },
+      "lagoon": {
+        "title": "Laguna de la Barca",
+        "desc": "A 55 minutos del parque central, esta laguna es el tesoro natural del municipio. Rodeada de montañas y naturaleza, es perfecta para el descanso y la aventura."
+      },
+      "waterfall": {
+        "title": "Cascada El Saladito",
+        "desc": "Una impresionante cascada de aproximadamente 30 metros de altura ubicada en la vereda El Almendral. Un espectáculo natural que no te puedes perder."
+      }
+    },
+    "gastronomy": {
+      "title": "Gastronomía",
+      "subtitle": "La cocina de Durania fusiona sabores tradicionales santandereanos con ingredientes frescos del campo.",
+      "items": [
+        {
+          "name": "Mute Norte Santandereano",
+          "desc": "Sopa tradicional preparada con maíz, cerdo, menudencias y especias locales. El plato más emblemático de la región."
+        },
+        {
+          "name": "Carnes a la Vara",
+          "desc": "Carnes asadas lentamente sobre brasas en vara de madera, técnica ancestral que conserva todos los jugos y sabores."
+        },
+        {
+          "name": "Cabrito Asado",
+          "desc": "El cabrito de la región, criado en pastizales naturales, es una delicia que refleja la riqueza ganadera del municipio."
+        },
+        {
+          "name": "Café de Durania",
+          "desc": "Café cultivado en las laderas de la montaña, con aroma y sabor inigualables. La razón por la que Durania fue llamada 'La Tacita de Plata'."
+        },
+        {
+          "name": "Miel y Productos Apícolas",
+          "desc": "Mieles puras cosechadas localmente, junto con polen y propóleo, productos directos de las colmenas de Durania."
+        },
+        {
+          "name": "Pescado de Río",
+          "desc": "Peces frescos del río Zulia y quebradas locales, preparados con recetas tradicionales de la cocina campesina."
+        }
+      ]
+    },
+    "apiculture": {
+      "title": "Apicultura y Apiturismo",
+      "subtitle": "Vive la experiencia única de convertirte en Guardián de las Abejas y descubrir el fascinante mundo de la miel.",
+      "what": {
+        "title": "¿Qué es el Apiturismo?",
+        "desc": "El apiturismo es una de las formas más sostenibles de turismo. Combina el conocimiento del mundo de las abejas, la práctica de la apicultura y su rol vital en la biodiversidad, con experiencias gastronómicas locales y contacto directo con la naturaleza."
+      },
+      "tour": {
+        "title": "Tour de un Día",
+        "desc": "Desde Cúcuta (47 km), con salida a las 6:30 AM desde el Parque Colón. Incluye transporte especializado, almuerzo típico, equipo de protección completo y kit apícola con miel de regalo.",
+        "price": "Adulto: $145.000 COP",
+        "priceKid": "Niños (5-9 años): $130.000 COP"
+      },
+      "includes": "El tour incluye",
+      "includesList": [
+        "Acceso a los panales de abejas",
+        "Equipo de protección (overol, botas, careta, guantes)",
+        "Guía especializado en apiturismo",
+        "Kit apícola con miel (143 gr) y frutas deshidratadas",
+        "Taller educativo sobre mieles y productos de la colmena",
+        "Certificado de 'Guardián de las Abejas'",
+        "Recorrido urbano por Durania",
+        "Seguro de viaje"
+      ]
+    },
+    "agriculture": {
+      "title": "Campo y Agricultura",
+      "subtitle": "Conoce la riqueza agropecuaria que sostiene y da identidad al municipio de Durania.",
+      "items": [
+        {
+          "title": "Caficultura",
+          "desc": "El café es el alma de Durania. Visita fincas cafeteras, conoce el proceso de recolección, beneficio y tueste del café de montaña."
+        },
+        {
+          "title": "Ganadería",
+          "desc": "La ganadería vacuna y caprina es pilar económico. El cabrito y los productos lácteos son reflejo de esta tradición productiva."
+        },
+        {
+          "title": "Piscicultura",
+          "desc": "Cultivo de peces en estanques naturales. Visita fincas piscícolas y disfruta del pescado más fresco directamente de la fuente."
+        },
+        {
+          "title": "Fincas Agroturísticas",
+          "desc": "Vive la experiencia del campo: recolecta frutas, aprende sobre cultivos y disfruta de la hospitalidad campesina en fincas locales."
+        }
+      ]
+    },
+    "culture": {
+      "title": "Cultura e Historia",
+      "subtitle": "Durania guarda siglos de historia, desde los pueblos indígenas hasta las tradiciones que se conservan hoy.",
+      "history": {
+        "title": "Historia del Municipio",
+        "desc": "Durania fue habitada originalmente por la tribu de los Oporomas, resultado de un mestizaje Karib-Chibcha. El nombre del municipio honra al General Justo Leónidas Durán, revolucionario liberal del siglo XIX. Fue conocida como 'La Tacita de Plata' por su auge en la producción cafetera."
+      },
+      "sites": {
+        "title": "Sitios Históricos",
+        "list": [
+          "Parque Principal Justo Leónidas Durán",
+          "Basílica San José",
+          "Casa de la Cultura (Casa del General Rafael Leal)",
+          "Escalinatas con estatua de Simón Bolívar",
+          "Monumento a la Virgen del Carmen (3 km del centro)",
+          "Piscina Olímpica (construida 1937-1940)"
+        ]
+      },
+      "traditions": {
+        "title": "Tradiciones",
+        "desc": "Los duranenses son conocidos por su hospitalidad, alegría y orgullo por sus raíces. Las fiestas patronales de San Nicolás, la música vallenata y carranguera, y las artesanías locales son parte viva de su identidad cultural."
+      }
+    },
+    "events": {
+      "title": "Ferias y Eventos",
+      "subtitle": "El municipio de Durania celebra todo el año con ferias, festividades y eventos que reúnen a toda la comunidad.",
+      "items": [
+        {
+          "month": "Diciembre",
+          "title": "Fiestas de San Nicolás",
+          "desc": "Festividades patronales en honor a San Nicolás. Música, baile, gastronomía y eventos culturales que llenan de vida las calles del municipio."
+        },
+        {
+          "month": "Todo el año",
+          "title": "Feria Agrícola",
+          "desc": "Exposición y venta de productos agropecuarios locales: café, miel, frutas, verduras y artesanías elaboradas por los campesinos de la región."
+        },
+        {
+          "month": "Junio",
+          "title": "Festival de Apiturismo",
+          "desc": "Celebración del mundo apícola con demostraciones, catas de miel, talleres educativos y tours especiales a los apiarios de la región."
+        },
+        {
+          "month": "Temporada",
+          "title": "Cosecha Cafetera",
+          "desc": "Durante la temporada de cosecha, las fincas abren sus puertas para que los visitantes participen en la recolección del grano de café."
+        }
+      ]
+    },
+    "lodging": {
+      "title": "Hospedaje",
+      "subtitle": "Encuentra el lugar perfecto para descansar en Durania, desde fincas campestres hasta posadas tradicionales.",
+      "types": [
+        {
+          "title": "Fincas Turísticas",
+          "desc": "Alójate en fincas rodeadas de naturaleza, con desayuno campesino incluido, hamacas y vistas al paisaje cafetero."
+        },
+        {
+          "title": "Posadas Campestres",
+          "desc": "Alojamiento familiar en el corazón del municipio, con cocina tradicional y atención personalizada por parte de los anfitriones locales."
+        },
+        {
+          "title": "Cabañas en la Montaña",
+          "desc": "Cabañas rústicas en medio de la naturaleza, perfectas para desconectarte y disfrutar del silencio y la brisa del campo."
+        },
+        {
+          "title": "Hoteles en el Casco Urbano",
+          "desc": "Hoteles sencillos y cómodos en el centro del municipio, cerca de los sitios históricos y el parque principal."
+        }
+      ],
+      "contact": "Para reservas y disponibilidad, contáctenos directamente."
+    },
+    "realEstate": {
+      "title": "Inmobiliario",
+      "subtitle": "Durania es el lugar ideal para vivir, invertir o tener tu finca de retiro en plena naturaleza.",
+      "types": [
+        {
+          "title": "Fincas en Venta",
+          "desc": "Propiedades rurales con terrenos cultivables, fuentes de agua y vistas panorámicas. Ideales para agronegocio o turismo rural."
+        },
+        {
+          "title": "Fincas en Arriendo",
+          "desc": "Alquiler de fincas por temporada o permanente para familias, grupos o emprendedores del sector turístico."
+        },
+        {
+          "title": "Lotes Rurales",
+          "desc": "Lotes con escrituras en zonas de alto potencial para construcción de vivienda campestre o proyectos ecoturísticos."
+        },
+        {
+          "title": "Casas Campestres",
+          "desc": "Viviendas construidas en zonas rurales, con diseños que integran la arquitectura regional al entorno natural."
+        }
+      ],
+      "cta": "Para información de propiedades disponibles, contáctenos."
+    },
+    "contact": {
+      "title": "Contáctanos",
+      "subtitle": "Planea tu visita a Durania. Estamos listos para ayudarte a vivir la mejor experiencia.",
+      "address": "Durania, Norte de Santander, Colombia",
+      "phone": "Teléfono",
+      "email": "Correo",
+      "hours": "Lunes a Viernes: 8:00 AM - 5:00 PM",
+      "form": {
+        "name": "Tu nombre",
+        "email": "Tu correo",
+        "message": "¿En qué podemos ayudarte?",
+        "send": "Enviar mensaje"
+      },
+      "social": "Síguenos en redes"
+    }
+  },
+  "footer": {
+    "tagline": "La Tacita de Plata de Norte de Santander",
+    "rights": "Todos los derechos reservados",
+    "madeWith": "Hecho con amor por Durania"
+  }
+}

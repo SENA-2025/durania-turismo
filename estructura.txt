@@ -1,3 +1,20 @@
+﻿==============================================================================
+ARCHIVO: .\astro.config.mjs
+==============================================================================
+import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
+import tailwind from '@astrojs/tailwind';
+
+// https://astro.build/config
+export default defineConfig({
+  integrations: [react(), tailwind()]
+});
+
+
+
+==============================================================================
+ARCHIVO: .\package-lock.json
+==============================================================================
 {
   "name": "durania-astro",
   "version": "0.0.1",
@@ -7296,3 +7313,3312 @@
     }
   }
 }
+
+
+
+
+==============================================================================
+ARCHIVO: .\package.json
+==============================================================================
+{
+  "name": "durania-astro",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.5.10",
+    "@astrojs/react": "^3.1.0",
+    "@astrojs/tailwind": "^5.1.0",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "astro": "^4.16.19",
+    "i18next": "^23.11.0",
+    "lucide-react": "^0.378.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-i18next": "^14.1.0",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.4.3"
+  }
+}
+
+
+
+==============================================================================
+ARCHIVO: .\tailwind.config.mjs
+==============================================================================
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+  theme: {
+    extend: {
+      colors: {
+        'brand-primary': '#10b981', // Emerald 500
+        'brand-dark': '#064e3b', // Emerald 900
+      }
+    },
+  },
+  plugins: [],
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\tsconfig.json
+==============================================================================
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  },
+  "exclude": [
+    "dist",
+    "node_modules",
+    ".astro"
+  ]
+}
+
+
+
+==============================================================================
+ARCHIVO: .\src\env.d.ts
+==============================================================================
+/// <reference path="../.astro/types.d.ts" />
+
+
+
+==============================================================================
+ARCHIVO: .\src\middleware.js
+==============================================================================
+// src/middleware.js
+import { defineMiddleware, sequence } from "astro:middleware";
+
+/**
+ * Middleware robusto de Durania.
+ * Utiliza defineMiddleware para tipado correcto y sequence para el flujo.
+ */
+export const onRequest = sequence(
+    defineMiddleware(async (context, next) => {
+        // Lógica de interceptación si es necesaria
+        return next();
+    })
+);
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\Visor360.astro
+==============================================================================
+---
+// src/components/Visor360.astro
+import type { CollectionEntry } from 'astro:content';
+
+/**
+ * COMPONENT: Visor360.astro
+ * Este componente maneja la UI del tour y la lógica de inicialización de Pannellum.
+ * Recibe los datos ya procesados desde la página (props).
+ */
+
+export interface Props {
+  propiedades?: CollectionEntry<'propiedades'>[];
+  guias?: CollectionEntry<'guias'>[];
+  informativas?: CollectionEntry<'informativas'>[];
+}
+
+const { propiedades = [], guias = [], informativas = [] } = Astro.props;
+
+// Construimos el JSON de escenas en el servidor para inyectarlo en el cliente de forma segura
+const scenesJSON: Record<string, any> = {};
+
+propiedades.forEach((prop) => {
+    scenesJSON[prop.slug] = {
+        title: prop.data.title,
+        type: "equirectangular",
+        panorama: prop.data.panorama, // Debe ser ruta absoluta a /public
+        hotSpots: [
+            {
+                pitch: 0,
+                yaw: 40,
+                cssClass: "custom-hotspot-wrapper",
+                _tooltipArgs: {
+                    title: "Datos de Inversión",
+                    content: `Precio: ${prop.data.price}<br/>Área: ${prop.data.area}<br/>Clima: ${prop.data.climate}`
+                }
+            }
+        ]
+    };
+});
+
+guias.forEach((guia) => {
+    scenesJSON[guia.slug] = {
+        title: guia.data.title,
+        type: "equirectangular",
+        panorama: guia.data.panorama,
+        hotSpots: [
+            {
+                pitch: 5,
+                yaw: -20,
+                cssClass: "custom-hotspot-wrapper",
+                _tooltipArgs: {
+                    title: "Información Turística",
+                    content: `Ubicación: ${guia.data.location}<br/>Dificultad: ${guia.data.difficulty}`
+                }
+            }
+        ]
+    };
+});
+
+informativas.forEach((info) => {
+    // Fallback de imagen si no hay heroImage
+    const panoramaImg = info.data.heroImage || "/images/lago_360.jpg"; 
+    
+    scenesJSON[info.slug] = {
+        title: info.data.title,
+        type: "equirectangular",
+        panorama: panoramaImg,
+        hotSpots: [
+            {
+                pitch: -10,
+                yaw: 10,
+                cssClass: "custom-hotspot-wrapper",
+                _tooltipArgs: {
+                    title: info.data.title,
+                    content: info.data.description
+                }
+            }
+        ]
+    };
+});
+
+// Determinamos la escena inicial
+const firstScene = propiedades.length > 0 ? propiedades[0].slug : 
+                   (guias.length > 0 ? guias[0].slug : 
+                   (informativas.length > 0 ? informativas[0].slug : "default"));
+---
+
+<!-- Visor 360 Full Screen Background -->
+<div class="fixed inset-0 z-0 bg-black">
+    <div id="panorama" class="w-full h-full"></div>
+</div>
+
+<!-- Floating UI Overlay -->
+<div class="fixed inset-0 z-10 pointer-events-none flex flex-col justify-between p-6">
+    <!-- Top Section: Logo & Sidebar -->
+    <div class="flex justify-between items-start pointer-events-auto">
+        <!-- Logotipo Flotante 'Durania' -->
+        <div class="flex items-center gap-3 bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 shadow-2xl hover:bg-white/20 transition-all duration-300">
+            <div class="w-12 h-12 rounded-full bg-[#10b981] flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.5)]">
+                <svg class="w-7 h-7 text-white drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-white font-extrabold text-2xl tracking-tight leading-none drop-shadow-lg">Durania</h1>
+                <p class="text-emerald-300 text-[10px] font-bold uppercase tracking-[0.2em] mt-1">Tour Virtual 360</p>
+            </div>
+        </div>
+
+        <!-- Menú Lateral Retráctil -->
+        <div class="relative group">
+            <button class="bg-[#064e3b]/80 hover:bg-[#10b981] backdrop-blur-md transition-all duration-300 px-6 py-3.5 rounded-xl border border-emerald-500/30 text-white font-semibold shadow-2xl flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                Explorar Destinos
+            </button>
+            <div class="absolute right-0 mt-3 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 origin-top-right">
+                <div class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[70vh] overflow-y-auto custom-scrollbar">
+                    
+                    {/* Inversión Inmobiliaria */}
+                    {propiedades.length > 0 && (
+                        <div class="px-5 py-2 bg-emerald-900/50 border-b border-emerald-500/30">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-emerald-300">Inversión Inmobiliaria</span>
+                        </div>
+                    )}
+                    {propiedades.map((prop) => (
+                        <button class="scene-btn flex items-center justify-between px-5 py-4 text-left text-white hover:bg-[#10b981]/80 transition-colors border-b border-white/5 focus:outline-none group/item" data-scene={prop.slug}>
+                            <div>
+                                <span class="block font-bold text-lg">{prop.data.title}</span>
+                                <span class="text-xs text-emerald-200/80 font-medium tracking-wide">{prop.data.price}</span>
+                            </div>
+                            <svg class="w-5 h-5 text-emerald-400 group-hover/item:text-white transition-colors group-hover/item:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    ))}
+
+                    {/* Rutas Turísticas */}
+                    {guias.length > 0 && (
+                        <div class="px-5 py-2 bg-emerald-900/50 border-b border-emerald-500/30 border-t border-t-white/10">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-emerald-300">Rutas Turísticas</span>
+                        </div>
+                    )}
+                    {guias.map((guia) => (
+                        <button class="scene-btn flex items-center justify-between px-5 py-4 text-left text-white hover:bg-[#10b981]/80 transition-colors border-b border-white/5 focus:outline-none group/item" data-scene={guia.slug}>
+                            <div>
+                                <span class="block font-bold text-lg">{guia.data.title}</span>
+                                <span class="text-xs text-emerald-200/80 font-medium tracking-wide">Dificultad: {guia.data.difficulty}</span>
+                            </div>
+                            <svg class="w-5 h-5 text-emerald-400 group-hover/item:text-white transition-colors group-hover/item:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    ))}
+
+                    {/* Historia y Cultura */}
+                    {informativas.length > 0 && (
+                        <div class="px-5 py-2 bg-emerald-900/50 border-b border-emerald-500/30 border-t border-t-white/10">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-emerald-300">Historia y Cultura</span>
+                        </div>
+                    )}
+                    {informativas.map((info) => (
+                        <button class="scene-btn flex items-center justify-between px-5 py-4 text-left text-white hover:bg-[#10b981]/80 transition-colors border-b border-white/5 focus:outline-none group/item" data-scene={info.slug}>
+                            <div>
+                                <span class="block font-bold text-lg">{info.data.title}</span>
+                            </div>
+                            <svg class="w-5 h-5 text-emerald-400 group-hover/item:text-white transition-colors group-hover/item:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Zoom Controls -->
+    <div class="pointer-events-auto flex justify-center gap-6 pb-4">
+        <button id="btn-zoomout" class="w-14 h-14 rounded-full bg-[#064e3b]/80 hover:bg-[#10b981] backdrop-blur-md border border-white/20 text-white flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.3)] transition-all hover:scale-110 active:scale-95 group">
+            <svg class="w-7 h-7 group-hover:stroke-[3px] transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+        </button>
+        <button id="btn-zoomin" class="w-14 h-14 rounded-full bg-[#064e3b]/80 hover:bg-[#10b981] backdrop-blur-md border border-white/20 text-white flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.3)] transition-all hover:scale-110 active:scale-95 group">
+            <svg class="w-7 h-7 group-hover:stroke-[3px] transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        </button>
+    </div>
+</div>
+
+<script is:inline define:vars={{ dynamicScenes: scenesJSON, firstScene }}>
+    /**
+     * Lógica de Cliente Pannellum
+     * Usamos is:inline para asegurar que se ejecute en el contexto global del navegador.
+     */
+    
+    window.hotspotTooltip = function(hotSpotDiv, args) {
+        const card = document.createElement('div');
+        card.className = 'custom-pro-card';
+        card.innerHTML = `
+            <div class="card-header">
+                <div class="card-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h3 class="card-title">${args.title}</h3>
+            </div>
+            <div class="card-body">
+                <p>${args.content}</p>
+            </div>
+        `;
+        hotSpotDiv.appendChild(card);
+    };
+
+    // Inyectamos la función de tooltip en cada escena
+    Object.keys(dynamicScenes).forEach(key => {
+        const scene = dynamicScenes[key];
+        if (scene.hotSpots) {
+            scene.hotSpots.forEach(hs => {
+                hs.createTooltipFunc = window.hotspotTooltip;
+                hs.createTooltipArgs = hs._tooltipArgs;
+            });
+        }
+    });
+
+    const tourConfig = {
+      default: {
+        firstScene: firstScene,
+        author: "Durania 360",
+        sceneFadeDuration: 1200,
+        autoLoad: true,
+        showControls: false,
+        compass: false
+      },
+      scenes: dynamicScenes
+    };
+
+    let viewer;
+    
+    function initPannellum() {
+        const container = document.getElementById('panorama');
+        if (!container || !window.pannellum) {
+            console.warn("Pannellum o el contenedor no están listos. Reintentando...");
+            return;
+        }
+
+        if (viewer) viewer.destroy();
+
+        try {
+            viewer = window.pannellum.viewer('panorama', tourConfig);
+            
+            // Event Listeners para la UI
+            document.getElementById('btn-zoomin')?.addEventListener('click', () => {
+                if (viewer) viewer.setHfov(viewer.getHfov() - 10);
+            });
+            document.getElementById('btn-zoomout')?.addEventListener('click', () => {
+                if (viewer) viewer.setHfov(viewer.getHfov() + 10);
+            });
+
+            document.querySelectorAll('.scene-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const sceneId = e.currentTarget.dataset.scene;
+                    if(sceneId && viewer) viewer.loadScene(sceneId);
+                });
+            });
+        } catch (e) {
+            console.error("Error al inicializar Pannellum:", e);
+        }
+    }
+
+    // Soporte para Astro View Transitions y Carga Inicial
+    document.addEventListener('astro:page-load', initPannellum);
+    document.addEventListener('DOMContentLoaded', initPannellum);
+</script>
+
+<style is:global>
+    /* Estilos globales para hotspots y cards (Pannellum los inyecta dinámicamente) */
+    .custom-hotspot-wrapper {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #10b981;
+        border: 2px solid white;
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.8);
+        cursor: pointer;
+        z-index: 10;
+        transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .custom-hotspot-wrapper::after {
+        content: '';
+        position: absolute;
+        inset: -6px;
+        border-radius: 50%;
+        border: 2px solid #10b981;
+        animation: hotspotPulse 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0.8;
+        pointer-events: none;
+    }
+
+    .custom-hotspot-wrapper:hover {
+        background-color: #34d399; 
+        box-shadow: 0 0 30px rgba(52, 211, 153, 1);
+    }
+
+    .custom-pro-card {
+        position: absolute;
+        bottom: 50px;
+        left: 50%;
+        transform: translateX(-50%) translateY(15px);
+        width: max-content;
+        max-width: 300px;
+        background: rgba(6, 78, 59, 0.9);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        padding: 20px;
+        color: white;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+        pointer-events: none;
+    }
+
+    .custom-hotspot-wrapper:hover .custom-pro-card {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 8px;
+    }
+
+    .card-title {
+        font-weight: 800;
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .card-body p {
+        font-size: 14px;
+        margin: 0;
+        color: #d1fae5;
+    }
+
+    @keyframes hotspotPulse {
+        0% { transform: scale(1); opacity: 0.8; }
+        100% { transform: scale(2); opacity: 0; }
+    }
+
+    .pnlm-container { cursor: default !important; }
+    .pnlm-grab { cursor: grab !important; }
+    .pnlm-grabbing { cursor: grabbing !important; }
+    
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+</style>
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\App.jsx
+==============================================================================
+/**
+ * =============================================================================
+ * App.jsx — Componente raíz de la aplicación
+ * =============================================================================
+ *
+ * Es el componente principal que React renderiza dentro de <div id="root">.
+ * Su única responsabilidad es COMPONER el layout completo de la página,
+ * importando y ordenando cada sección del sitio.
+ *
+ * ESTRUCTURA DE LA PÁGINA (de arriba hacia abajo):
+ * ─────────────────────────────────────────────────
+ *  <Navbar />          → Barra de navegación fija con cambio de idioma
+ *  <main>
+ *    <Hero />          → Banner principal con slideshow y estadísticas
+ *    <Stats />         → Banda de números clave + marquee de categorías
+ *    <NatureSection /> → Senderismo, aves, ríos, laguna y cascadas
+ *    <GastronomySection /> → Platos típicos de Durania
+ *    <ApicultureSection /> → Apiturismo y tour de abejas
+ *    <AgricultureSection /> → Café, ganadería, piscicultura, agroturismo
+ *    <CultureSection />    → Historia, sitios patrimoniales, tradiciones
+ *    <EventsSection />     → Ferias y festividades del municipio
+ *    <LodgingSection />    → Tipos de hospedaje disponibles
+ *    <RealEstateSection /> → Inmobiliario rural: fincas, lotes, casas
+ *    <ContactSection />    → Formulario, mapa, redes sociales
+ *  </main>
+ *  <Footer />          → Pie de página con links y CTA final
+ *
+ * NOTAS:
+ * ──────
+ * - No maneja estado propio. Cada sección es independiente.
+ * - El sistema de idiomas (i18n) ya fue inicializado en main.jsx antes
+ *   de que este componente se monte, por lo que useTranslation() está
+ *   disponible en cualquier componente hijo.
+ * - BrowserRouter se configura en main.jsx (no aquí) para mantener
+ *   la separación de responsabilidades.
+ * =============================================================================
+ */
+
+// src/components/react/App.jsx
+import i18n from './i18n.js';
+import { I18nextProvider } from 'react-i18next';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import Stats from './components/Stats';
+import NatureSection from './components/NatureSection';
+import GastronomySection from './components/GastronomySection';
+import ApicultureSection from './components/ApicultureSection';
+import AgricultureSection from './components/AgricultureSection';
+import CultureSection from './components/CultureSection';
+import EventsSection from './components/EventsSection';
+import LodgingSection from './components/LodgingSection';
+import RealEstateSection from './components/RealEstateSection';
+import ContactSection from './components/ContactSection';
+import Footer from './components/Footer';
+
+export default function App() {
+  return (
+    <I18nextProvider i18n={i18n}>
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-grow">
+          <Hero />
+          <Stats />
+          <NatureSection />
+          <GastronomySection />
+          <ApicultureSection />
+          <AgricultureSection />
+          <CultureSection />
+          <EventsSection />
+          <LodgingSection />
+          <RealEstateSection />
+          <ContactSection />
+        </main>
+        <Footer />
+      </div>
+    </I18nextProvider>
+  );
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\i18n.js
+==============================================================================
+/**
+ * =============================================================================
+ * i18n.js — Configuración del sistema de internacionalización (i18next)
+ * =============================================================================
+ *
+ * Este archivo inicializa la librería i18next con el plugin react-i18next,
+ * que permite mostrar el contenido del sitio en Español o Inglés según
+ * la preferencia del usuario.
+ *
+ * CÓMO FUNCIONA:
+ * ──────────────
+ * 1. Se importan los archivos de traducción JSON desde /src/locales/
+ *    → es.json contiene todos los textos en Español
+ *    → en.json contiene todos los textos en Inglés
+ *
+ * 2. i18n.use(initReactI18next) conecta la librería con React para que
+ *    el hook useTranslation() esté disponible en todos los componentes.
+ *
+ * 3. El usuario cambia de idioma desde el botón EN/ES del Navbar,
+ *    que llama a i18n.changeLanguage('en') o i18n.changeLanguage('es').
+ *    El cambio es instantáneo sin recargar la página.
+ *
+ * CONFIGURACIÓN:
+ * ──────────────
+ * - lng: 'es'          → El idioma inicial al cargar el sitio es Español.
+ * - fallbackLng: 'es'  → Si falta una clave en el idioma activo, usa Español.
+ * - escapeValue: false → No escapar caracteres HTML en las traducciones
+ *                        (permite usar acentos y ñ sin problemas).
+ *
+ * USO EN COMPONENTES:
+ * ───────────────────
+ * import { useTranslation } from 'react-i18next'
+ *
+ * function MiComponente() {
+ *   const { t } = useTranslation()
+ *   return <h1>{t('hero.title')}</h1>  // → "Durania" o "Durania"
+ * }
+ *
+ * Para obtener arrays (listas): t('clave', { returnObjects: true })
+ * =============================================================================
+ */
+
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
+import es from './locales/es.json'
+import en from './locales/en.json'
+
+i18n
+  .use(initReactI18next)   // Conecta i18next con el contexto de React
+  .init({
+    resources: {
+      es: { translation: es }, // Namespace "translation" con textos en Español
+      en: { translation: en }, // Namespace "translation" con textos en Inglés
+    },
+    lng: 'es',               // Idioma por defecto al cargar el sitio
+    fallbackLng: 'es',       // Idioma de respaldo si falta una clave
+    interpolation: {
+      escapeValue: false,    // React ya protege contra XSS; no es necesario escapar
+    },
+  })
+
+export default i18n
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\components\AgricultureSection.jsx
+==============================================================================
+import { useTranslation } from 'react-i18next'
+import { Sprout, Beef, Fish, TreePine } from 'lucide-react'
+
+const icons   = [Sprout, Beef, Fish, TreePine]
+const accents = ['#4ade80', '#f87171', '#60a5fa', '#a3e635']
+const images  = [
+  'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=700&q=85',
+  'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=85',
+  'https://images.unsplash.com/photo-1514316454349-750a7fd3da3a?w=700&q=85',
+  'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=85',
+]
+
+export default function AgricultureSection() {
+  const { t } = useTranslation()
+  const items = t('sections.agriculture.items', { returnObjects: true })
+
+  return (
+    <section id="agricultura" className="section-light relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-green-950/30 via-transparent to-transparent" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+
+          {/* Left sticky header */}
+          <div className="lg:sticky lg:top-32">
+            <span className="pill bg-green-500/10 border border-green-500/30 text-green-400 mb-6 inline-flex">
+              🌾 Agroturismo
+            </span>
+            <h2 className="font-serif font-black text-white text-5xl md:text-6xl mb-6" style={{ lineHeight: 1 }}>
+              {t('sections.agriculture.title')}
+            </h2>
+            <p className="text-white/40 leading-relaxed mb-8">{t('sections.agriculture.subtitle')}</p>
+
+            {/* Big showcase image */}
+            <div className="rounded-3xl overflow-hidden h-72">
+              <img
+                src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=85"
+                alt="Campo Durania"
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+          </div>
+
+          {/* Right: cards */}
+          <div className="space-y-4">
+            {items.map((item, i) => {
+              const Icon = icons[i]
+              const accent = accents[i]
+              return (
+                <div key={i} className="group relative rounded-2xl overflow-hidden card-hover" style={{ height: '200px' }}>
+                  <img src={images[i]} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
+
+                  <div className="absolute inset-0 p-6 flex flex-col justify-center max-w-sm">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: accent + '20', border: `1px solid ${accent}50` }}>
+                        <Icon className="w-4 h-4" style={{ color: accent }} />
+                      </div>
+                      <h3 className="text-white font-bold text-lg">{item.title}</h3>
+                    </div>
+                    <p className="text-white/60 text-sm leading-relaxed">{item.desc}</p>
+                  </div>
+
+                  <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-white/10 transition-all duration-300" />
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\components\ApicultureSection.jsx
+==============================================================================
+import { useTranslation } from 'react-i18next'
+import { CheckCircle, ArrowRight } from 'lucide-react'
+
+/* Imágenes verificadas visualmente — apicultura real */
+const BEEKEEPER_IMG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Beekeeper_with_moveable_comb_hive.jpg/800px-Beekeeper_with_moveable_comb_hive.jpg'
+const HONEYCOMB_IMG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Honey_comb.jpg/800px-Honey_comb.jpg'
+const BEE_FLOWER_IMG = 'https://images.unsplash.com/photo-1568526381923-caf3fd520382?w=800&q=85'
+
+export default function ApicultureSection() {
+  const { t } = useTranslation()
+  const includesList = t('sections.apiculture.includesList', { returnObjects: true })
+
+  return (
+    <section id="apiturismo" className="section-dark relative overflow-hidden">
+      {/* BG glow ámbar */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-amber-500/5 rounded-full blur-3xl" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+          {/* ── Bloque visual izquierdo ── */}
+          <div className="relative">
+
+            {/* Imagen principal — apicultor inspeccionando colmena */}
+            <div className="relative rounded-3xl overflow-hidden" style={{ height: '520px' }}>
+              <img
+                src={BEEKEEPER_IMG}
+                alt="Apicultor inspeccionando colmena en Durania"
+                className="w-full h-full object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-tr from-black/70 via-black/20 to-transparent" />
+
+              {/* Badge precio */}
+              <div className="absolute bottom-6 left-6 glass rounded-2xl p-4 max-w-[220px]">
+                <div className="text-amber-400 text-3xl font-black mb-0.5">$145k</div>
+                <div className="text-white/60 text-xs">Tour adulto incluye todo</div>
+              </div>
+            </div>
+
+            {/* Tarjeta flotante — certificado */}
+            <div className="absolute -top-6 -right-6 glass rounded-2xl p-4 w-44 animate-float z-20">
+              <div className="text-3xl mb-1">🐝</div>
+              <div className="text-white font-bold text-sm">Guardián de</div>
+              <div className="text-amber-400 font-bold text-sm">las Abejas</div>
+              <div className="text-white/40 text-xs mt-1">Certificado oficial</div>
+            </div>
+
+            {/* Fila de miniaturas — abeja y panal */}
+            <div className="grid grid-cols-2 gap-3 mt-3">
+              <div className="rounded-2xl overflow-hidden h-28">
+                <img
+                  src={BEE_FLOWER_IMG}
+                  alt="Abeja polinizando flor"
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="rounded-2xl overflow-hidden h-28">
+                <img
+                  src={HONEYCOMB_IMG}
+                  alt="Panal de miel natural"
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            </div>
+
+            {/* Borde glow ámbar */}
+            <div className="absolute inset-0 rounded-3xl border border-amber-500/20 pointer-events-none" />
+          </div>
+
+          {/* ── Contenido derecho ── */}
+          <div>
+            <span className="pill bg-amber-500/10 border border-amber-500/30 text-amber-400 mb-6 inline-flex">
+              🍯 Apiturismo · Durania
+            </span>
+
+            <h2 className="font-serif font-black text-white text-4xl md:text-5xl mb-6" style={{ lineHeight: 1.05 }}>
+              {t('sections.apiculture.title')}
+            </h2>
+
+            <p className="text-white/50 leading-relaxed mb-8">
+              {t('sections.apiculture.what.desc')}
+            </p>
+
+            {/* Detalles del tour */}
+            <div className="glass rounded-2xl p-5 mb-8">
+              <h3 className="text-white font-bold mb-3">{t('sections.apiculture.tour.title')}</h3>
+              <p className="text-white/50 text-sm mb-4">{t('sections.apiculture.tour.desc')}</p>
+              <div className="flex gap-3 flex-wrap">
+                <span className="pill bg-amber-500/20 border border-amber-500/40 text-amber-300">
+                  {t('sections.apiculture.tour.price')}
+                </span>
+                <span className="pill bg-green-500/20 border border-green-500/40 text-green-300">
+                  {t('sections.apiculture.tour.priceKid')}
+                </span>
+              </div>
+            </div>
+
+            {/* Lista de incluidos */}
+            <h4 className="text-white/60 text-xs uppercase tracking-widest mb-4">
+              {t('sections.apiculture.includes')}
+            </h4>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-8">
+              {includesList.map((item, i) => (
+                <li key={i} className="flex items-start gap-2 text-white/60 text-sm">
+                  <CheckCircle className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+
+            <a href="#contacto" className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-black font-bold px-8 py-4 rounded-full transition-all duration-300 glow-amber">
+              Reservar tour
+              <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\components\ContactSection.jsx
+==============================================================================
+import { useTranslation } from 'react-i18next'
+import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react'
+import { useState } from 'react'
+
+export default function ContactSection() {
+  const { t } = useTranslation()
+  const [form, setForm] = useState({ name: '', email: '', message: '' })
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const subject = encodeURIComponent('Consulta Turismo Durania')
+    const body = encodeURIComponent(`Nombre: ${form.name}\n\n${form.message}`)
+    window.location.href = `mailto:turismo@durania.gov.co?subject=${subject}&body=${body}`
+  }
+
+  return (
+    <section id="contacto" className="section-dark relative overflow-hidden">
+      {/* Gradient bg */}
+      <div className="absolute inset-0 bg-gradient-to-br from-green-950/40 via-transparent to-transparent" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-green-500/8 rounded-full blur-3xl" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="text-center mb-16">
+          <span className="pill bg-green-500/10 border border-green-500/30 text-green-400 mb-4 inline-flex mx-auto">
+            📍 Contáctanos
+          </span>
+          <h2 className="font-serif font-black text-white text-5xl md:text-6xl mb-4" style={{ lineHeight: 1 }}>
+            {t('sections.contact.title')}
+          </h2>
+          <p className="text-white/40 max-w-lg mx-auto">{t('sections.contact.subtitle')}</p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+          {/* Info panel */}
+          <div className="lg:col-span-2 space-y-4">
+            {[
+              { icon: MapPin,  label: t('sections.contact.address'), sub: '47 km al suroeste de Cúcuta', color: 'text-green-400' },
+              { icon: Phone,   label: t('sections.contact.phone'),   sub: '+57 (07) 574-XXXX',          color: 'text-cyan-400'  },
+              { icon: Mail,    label: t('sections.contact.email'),   sub: 'turismo@durania.gov.co',     color: 'text-amber-400' },
+              { icon: Clock,   label: t('sections.contact.hours'),   sub: '',                           color: 'text-purple-400'},
+            ].map(({ icon: Icon, label, sub, color }) => (
+              <div key={label} className="glass rounded-2xl p-5 flex items-start gap-4">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${color} bg-white/5`}>
+                  <Icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-white font-medium text-sm">{label}</div>
+                  {sub && <div className="text-white/40 text-xs mt-0.5">{sub}</div>}
+                </div>
+              </div>
+            ))}
+
+            {/* Map */}
+            <div className="rounded-2xl overflow-hidden" style={{ height: '180px' }}>
+              <iframe
+                title="Durania mapa"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31623.!2d-72.6!3d7.85!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e664f1e16dcfe4f%3A0x5b56de3d406bfea7!2sDurania%2C%20Norte%20de%20Santander!5e0!3m2!1ses!2sco!4v1620000000000!5m2!1ses!2sco"
+                width="100%" height="100%"
+                style={{ border: 0, filter: 'invert(0.9) hue-rotate(180deg)' }}
+                allowFullScreen="" loading="lazy"
+              />
+            </div>
+
+            {/* Social */}
+            <div className="flex gap-3">
+              <a href="https://www.facebook.com/Durania.NortedeSantander" target="_blank" rel="noopener noreferrer"
+                className="flex-1 glass rounded-xl py-3 flex items-center justify-center gap-2 text-white/60 hover:text-blue-400 hover:border-blue-400/40 border border-white/10 transition-all text-sm">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                Facebook
+              </a>
+              <a href="#" className="flex-1 glass rounded-xl py-3 flex items-center justify-center gap-2 text-white/60 hover:text-pink-400 hover:border-pink-400/40 border border-white/10 transition-all text-sm">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                Instagram
+              </a>
+            </div>
+          </div>
+
+          {/* Form */}
+          <div className="lg:col-span-3">
+            <form onSubmit={handleSubmit} className="glass rounded-3xl p-8 space-y-5 border border-white/10">
+              <h3 className="text-white font-bold text-xl mb-2">Envíanos un mensaje</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-white/40 text-xs uppercase tracking-wider block mb-2">{t('sections.contact.form.name')}</label>
+                  <input
+                    type="text" required
+                    value={form.name}
+                    onChange={e => setForm({ ...form, name: e.target.value })}
+                    placeholder="Tu nombre completo"
+                    className="w-full bg-white/5 border border-white/10 focus:border-green-500/50 rounded-xl px-4 py-3 text-white placeholder-white/20 outline-none transition-colors text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="text-white/40 text-xs uppercase tracking-wider block mb-2">{t('sections.contact.form.email')}</label>
+                  <input
+                    type="email" required
+                    value={form.email}
+                    onChange={e => setForm({ ...form, email: e.target.value })}
+                    placeholder="tu@correo.com"
+                    className="w-full bg-white/5 border border-white/10 focus:border-green-500/50 rounded-xl px-4 py-3 text-white placeholder-white/20 outline-none transition-colors text-sm"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-white/40 text-xs uppercase tracking-wider block mb-2">{t('sections.contact.form.message')}</label>
+                <textarea
+                  required rows={6}
+                  value={form.message}
+                  onChange={e => setForm({ ...form, message: e.target.value })}
+                  placeholder="¿En qué podemos ayudarte? Pregunta sobre tours, hospedaje, propiedades..."
+                  className="w-full bg-white/5 border border-white/10 focus:border-green-500/50 rounded-xl px-4 py-3 text-white placeholder-white/20 outline-none transition-colors resize-none text-sm"
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-green-500 hover:bg-green-400 text-black font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 glow-green"
+              >
+                {t('sections.contact.form.send')}
+                <Send className="w-4 h-4" />
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\components\CultureSection.jsx
+==============================================================================
+import { useTranslation } from 'react-i18next'
+import { Landmark } from 'lucide-react'
+
+export default function CultureSection() {
+  const { t } = useTranslation()
+  const sitesList = t('sections.culture.sites.list', { returnObjects: true })
+
+  return (
+    <section id="cultura" className="section-dark relative overflow-hidden">
+      {/* BG */}
+      <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-3xl" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="text-center mb-16">
+          <span className="pill bg-purple-500/10 border border-purple-500/30 text-purple-400 mb-4 inline-flex mx-auto">
+            🏛️ Patrimonio Cultural
+          </span>
+          <h2 className="font-serif font-black text-white text-5xl md:text-6xl" style={{ lineHeight: 1 }}>
+            {t('sections.culture.title')}
+          </h2>
+        </div>
+
+        {/* Timeline + images layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          {/* Historia — big card */}
+          <div className="lg:col-span-2 relative rounded-3xl overflow-hidden group" style={{ minHeight: '400px' }}>
+            <img
+              src="https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=1000&q=85"
+              alt="Historia Durania"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-8">
+              <h3 className="font-serif font-bold text-white text-2xl mb-3">{t('sections.culture.history.title')}</h3>
+              <p className="text-white/60 text-sm leading-relaxed">{t('sections.culture.history.desc')}</p>
+            </div>
+          </div>
+
+          {/* Sites list */}
+          <div className="space-y-4">
+            <div className="glass rounded-2xl p-6 mb-4">
+              <div className="flex items-center gap-2 mb-5">
+                <Landmark className="w-5 h-5 text-purple-400" />
+                <h3 className="text-white font-bold">{t('sections.culture.sites.title')}</h3>
+              </div>
+              <ul className="space-y-3">
+                {sitesList.map((site, i) => (
+                  <li key={i} className="flex items-start gap-3 group/item">
+                    <span className="w-6 h-6 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 text-xs flex items-center justify-center font-bold flex-shrink-0 mt-0.5">
+                      {i + 1}
+                    </span>
+                    <span className="text-white/50 text-sm group-hover/item:text-white/80 transition-colors">{site}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Traditions image */}
+            <div className="relative rounded-2xl overflow-hidden group" style={{ height: '180px' }}>
+              <img
+                src="https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=600&q=85"
+                alt="Tradiciones"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+              <div className="absolute bottom-4 left-4">
+                <h3 className="text-white font-bold">{t('sections.culture.traditions.title')}</h3>
+                <p className="text-white/50 text-xs mt-1 line-clamp-2">{t('sections.culture.traditions.desc')}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\components\EventsSection.jsx
+==============================================================================
+import { useTranslation } from 'react-i18next'
+import { Calendar } from 'lucide-react'
+
+const images = [
+  'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=700&q=85',
+  'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=85',
+  'https://images.unsplash.com/photo-1471943038391-0c3a2a8f7f5d?w=700&q=85',
+  'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=700&q=85',
+]
+const accents = ['#f87171','#4ade80','#fbbf24','#34d399']
+
+export default function EventsSection() {
+  const { t } = useTranslation()
+  const items = t('sections.events.items', { returnObjects: true })
+
+  return (
+    <section id="ferias" className="section-light relative overflow-hidden">
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-red-500/5 rounded-full blur-3xl" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="mb-16">
+          <span className="pill bg-red-500/10 border border-red-500/30 text-red-400 mb-4 inline-flex">
+            🎉 Ferias & Festividades
+          </span>
+          <h2 className="font-serif font-black text-white text-5xl md:text-6xl" style={{ lineHeight: 1 }}>
+            {t('sections.events.title')}
+          </h2>
+        </div>
+
+        {/* Horizontal scroll cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {items.map((item, i) => (
+            <div key={i} className="group relative rounded-3xl overflow-hidden card-hover cursor-pointer" style={{ height: '420px' }}>
+              <img
+                src={images[i]}
+                alt={item.title}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
+
+              {/* Accent bar on top */}
+              <div className="absolute top-0 left-0 right-0 h-1" style={{ background: accents[i] }} />
+
+              {/* Month badge */}
+              <div
+                className="absolute top-4 left-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold"
+                style={{ background: accents[i] + '20', border: `1px solid ${accents[i]}50`, color: accents[i] }}
+              >
+                <Calendar className="w-3 h-3" />
+                {item.month}
+              </div>
+
+              {/* Content */}
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <h3 className="font-serif font-bold text-white text-xl mb-2">{item.title}</h3>
+                <p className="text-white/50 text-sm leading-relaxed opacity-0 group-hover:opacity-100 translate-y-3 group-hover:translate-y-0 transition-all duration-400">
+                  {item.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\components\Footer.jsx
+==============================================================================
+import { useTranslation } from 'react-i18next'
+import { ArrowUpRight } from 'lucide-react'
+
+const navLinks = [
+  { key: 'nature',      href: '#naturaleza' },
+  { key: 'gastronomy',  href: '#gastronomia' },
+  { key: 'apiculture',  href: '#apiturismo' },
+  { key: 'agriculture', href: '#agricultura' },
+  { key: 'culture',     href: '#cultura' },
+  { key: 'events',      href: '#ferias' },
+  { key: 'lodging',     href: '#hospedaje' },
+  { key: 'realEstate',  href: '#inmobiliario' },
+]
+
+export default function Footer() {
+  const { t } = useTranslation()
+
+  return (
+    <footer className="bg-[#050505] border-t border-white/5">
+      {/* Top CTA band */}
+      <div className="border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h3 className="font-serif font-black text-white text-3xl mb-1">¿Listo para visitar Durania?</h3>
+            <p className="text-white/40 text-sm">Planea tu experiencia perfecta en La Tacita de Plata.</p>
+          </div>
+          <a href="#contacto" className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-400 text-black font-bold px-8 py-4 rounded-full transition-all duration-300 whitespace-nowrap glow-green">
+            Contactar ahora
+            <ArrowUpRight className="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+
+      {/* Main footer */}
+      <div className="max-w-7xl mx-auto px-6 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-14">
+          {/* Brand */}
+          <div>
+            <a href="#inicio" className="flex items-center gap-3 mb-5 group">
+              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg ring-1 ring-white/10 group-hover:ring-green-400/50 transition-all duration-300 flex-shrink-0">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/1/12/Flag_of_Durania_%28Norte_de_Santander%29.svg"
+                  alt="Bandera de Durania"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <div className="font-serif font-bold text-white text-xl">Durania</div>
+                <div className="text-white/30 text-xs tracking-widest uppercase">Norte de Santander</div>
+              </div>
+            </a>
+            <p className="text-white/30 text-sm leading-relaxed max-w-xs">
+              {t('footer.tagline')}. Un destino único de naturaleza, cultura y aventura en Colombia.
+            </p>
+          </div>
+
+          {/* Links */}
+          <div>
+            <h4 className="text-white/40 text-xs uppercase tracking-widest mb-5">Explorar</h4>
+            <ul className="grid grid-cols-2 gap-y-3 gap-x-4">
+              {navLinks.map(link => (
+                <li key={link.key}>
+                  <a href={link.href} className="text-white/40 hover:text-white text-sm transition-colors duration-200 flex items-center gap-1 group">
+                    <span className="w-1 h-1 rounded-full bg-green-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    {t(`nav.${link.key}`)}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact mini */}
+          <div>
+            <h4 className="text-white/40 text-xs uppercase tracking-widest mb-5">Contacto</h4>
+            <div className="space-y-3 text-white/40 text-sm">
+              <p>📍 Durania, Norte de Santander, Colombia</p>
+              <p>🌐 <a href="https://www.durania-nortedesantander.gov.co" target="_blank" rel="noopener noreferrer" className="hover:text-green-400 transition-colors">durania-nortedesantander.gov.co</a></p>
+              <p>📘 <a href="https://www.facebook.com/Durania.NortedeSantander" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">Facebook oficial</a></p>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+          <p className="text-white/20 text-xs">
+            © {new Date().getFullYear()} Turismo Durania. {t('footer.rights')}.
+          </p>
+          <p className="text-white/20 text-xs">{t('footer.madeWith')} 🌿</p>
+        </div>
+      </div>
+    </footer>
+  )
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\components\GastronomySection.jsx
+==============================================================================
+import { useTranslation } from 'react-i18next'
+
+const images = [
+  'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&q=85',
+  'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=85',
+  'https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600&q=85',
+  'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=600&q=85',
+  'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=600&q=85',
+  'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=85',
+]
+
+export default function GastronomySection() {
+  const { t } = useTranslation()
+  const items = t('sections.gastronomy.items', { returnObjects: true })
+
+  return (
+    <section id="gastronomia" className="section-light relative overflow-hidden">
+      {/* BG decoration */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+          <div>
+            <span className="pill bg-amber-500/10 border border-amber-500/30 text-amber-400 mb-4 inline-flex">
+              🍽️ Sabores Locales
+            </span>
+            <h2 className="font-serif font-black text-white text-5xl md:text-6xl" style={{ lineHeight: 1 }}>
+              {t('sections.gastronomy.title')}
+            </h2>
+          </div>
+          <p className="text-white/40 max-w-xs text-sm leading-relaxed">
+            {t('sections.gastronomy.subtitle')}
+          </p>
+        </div>
+
+        {/* Grid — 3 big + 3 small */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {items.map((item, i) => (
+            <div
+              key={i}
+              className="group relative rounded-2xl overflow-hidden card-hover cursor-pointer"
+              style={{ height: i < 3 ? '340px' : '240px' }}
+            >
+              <img
+                src={images[i]}
+                alt={item.name}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+
+              {/* Number */}
+              <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-amber-500/80 flex items-center justify-center text-black font-black text-sm">
+                {i + 1}
+              </div>
+
+              {/* Text */}
+              <div className="absolute bottom-0 left-0 right-0 p-5">
+                <h3 className="font-bold text-white text-lg mb-1">{item.name}</h3>
+                <p className="text-white/50 text-xs leading-relaxed opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                  {item.desc}
+                </p>
+              </div>
+
+              {/* Amber border on hover */}
+              <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-amber-500/40 transition-all duration-400" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\components\Hero.jsx
+==============================================================================
+/**
+ * =============================================================================
+ * Hero.jsx — Sección principal de bienvenida (pantalla completa)
+ * =============================================================================
+ *
+ * Es la primera sección visible al entrar al sitio. Ocupa el 100% del
+ * alto de la pantalla (min-h-screen) y sirve como carta de presentación
+ * visual de Durania.
+ *
+ * CARACTERÍSTICAS:
+ * ────────────────
+ * 1. SLIDESHOW AUTOMÁTICO
+ *    - 3 imágenes de alta resolución rotan cada 5 segundos.
+ *    - La imagen activa hace un zoom-out suave (scale 1.1 → 1.05) para
+ *      dar sensación de movimiento sin ser distractora.
+ *    - Las imágenes inactivas permanecen con opacity: 0 (CSS transition).
+ *    - El intervalo se limpia al desmontar el componente (cleanup).
+ *
+ * 2. INDICADORES DE SLIDE
+ *    - Puntos en la esquina superior derecha: el activo se estira (w-8).
+ *    - Clickeables para saltar a cualquier slide manualmente.
+ *
+ * 3. ETIQUETA DE UBICACIÓN
+ *    - Badge con efecto glass en la parte superior central.
+ *    - Muestra el nombre del slide actual + "Durania, Norte de Santander".
+ *
+ * 4. CONTENIDO CENTRAL
+ *    - Badge superior verde: categoría del destino.
+ *    - Título "Durania" con fuente serif en tamaño responsivo (clamp).
+ *    - Subtítulo "La Tacita de Plata" con gradiente dorado animado.
+ *    - Descripción traducida (i18n).
+ *    - Dos CTAs: "Explorar destinos" y "Ver Apiturismo".
+ *    - Todos con animaciones fadeUp escalonadas (delay-*).
+ *
+ * 5. ORBES DECORATIVOS
+ *    - Círculos borrosos de color (verde y ámbar) flotando con animate-float.
+ *    - Puramente decorativos, añaden profundidad visual.
+ *
+ * 6. INDICADOR DE SCROLL
+ *    - Línea vertical que crece en hover, invitando a scrollear.
+ *
+ * 7. BARRA DE ESTADÍSTICAS
+ *    - Anclada al fondo de la sección con glass-dark.
+ *    - 4 métricas clave del municipio: distancia, aves, altitud, senderos.
+ *
+ * ESTADOS:
+ * ────────
+ * - current (number) → Índice del slide actualmente visible (0, 1 o 2).
+ * - loaded  (boolean)→ Se pone true al montar; activa la transición de
+ *                      opacidad del contenido central (fade-in al cargar).
+ *
+ * IMÁGENES USADAS:
+ * ────────────────
+ * - Unsplash (licencia libre): naturaleza y café
+ * - Wikimedia Commons (dominio público): Arroyo La Barca, Durania
+ * =============================================================================
+ */
+
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { ChevronDown, Play, MapPin } from 'lucide-react'
+
+/**
+ * slides — Configuración de las 3 imágenes del slideshow.
+ * - img:   URL de la imagen de fondo en alta resolución.
+ * - label: Texto descriptivo que aparece en el badge de ubicación.
+ */
+const slides = [
+  {
+    img: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1920&q=90',
+    label: 'Naturaleza Viva',
+  },
+  {
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Arroyo_La_Barca-Durania%2C_Norte_de_Santander.jpg/1280px-Arroyo_La_Barca-Durania%2C_Norte_de_Santander.jpg',
+    label: 'Laguna La Barca', // Foto real de Durania (Wikimedia Commons)
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1920&q=90',
+    label: 'Tierra Cafetera',
+  },
+]
+
+export default function Hero() {
+  const { t } = useTranslation()
+
+  /** Índice del slide actualmente visible */
+  const [current, setCurrent] = useState(0)
+
+  /**
+   * loaded: false al inicio para hacer fade-in del contenido al cargar.
+   * Se pone true en el primer useEffect (después del primer render).
+   */
+  const [loaded, setLoaded] = useState(false)
+
+  /**
+   * intervalRef: guarda la referencia al setInterval para poder
+   * limpiarlo en el cleanup del useEffect y evitar memory leaks.
+   */
+  const intervalRef = useRef(null)
+
+  useEffect(() => {
+    // Activa el fade-in del contenido central al montar el componente
+    setLoaded(true)
+
+    // Avanza al siguiente slide cada 5 segundos (loop circular con módulo)
+    intervalRef.current = setInterval(() => {
+      setCurrent(p => (p + 1) % slides.length)
+    }, 5000)
+
+    // Cleanup: limpia el intervalo cuando el componente se desmonta
+    return () => clearInterval(intervalRef.current)
+  }, []) // [] → solo se ejecuta una vez al montar
+
+  return (
+    <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
+
+      {/* ── Slideshow de imágenes ──────────────────────────────────────────
+       * Cada slide es una capa absoluta que ocupa todo el section.
+       * La opacidad controla cuál está visible: 1 = activo, 0 = oculto.
+       * El efecto de zoom se controla con transform: scale() en el img.
+       */}
+      {slides.map((s, i) => (
+        <div
+          key={i}
+          className="absolute inset-0 transition-opacity duration-1000"
+          style={{ opacity: i === current ? 1 : 0 }}
+        >
+          <img
+            src={s.img}
+            alt={s.label}
+            className="w-full h-full object-cover"
+            style={{
+              /* Slide activo: zoom más cercano. Inactivo: más alejado.
+               * La transición de 6s da el efecto "Ken Burns" suave. */
+              transform: i === current ? 'scale(1.05)' : 'scale(1.1)',
+              transition: 'transform 6s ease',
+            }}
+          />
+        </div>
+      ))}
+
+      {/* ── Overlays de gradiente ────────────────────────────────────────────
+       * Dos capas de gradiente para asegurar legibilidad del texto:
+       * 1. Vertical: oscuro arriba y muy oscuro abajo (para el contenido).
+       * 2. Horizontal: oscuro a la izquierda (refuerza el texto centrado).
+       */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/90" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
+
+      {/* ── Orbes decorativos ────────────────────────────────────────────────
+       * Círculos grandes con blur extremo (blur-3xl) que dan profundidad.
+       * animate-float: suben y bajan suavemente en loop infinito.
+       * delay-300 en el segundo orbe para que no estén sincronizados.
+       */}
+      <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-green-500/10 rounded-full blur-3xl animate-float" />
+      <div className="absolute bottom-1/3 left-1/3 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl animate-float delay-300" />
+
+      {/* ── Indicadores de slide (puntos) ───────────────────────────────────
+       * El punto activo se expande horizontalmente (w-8 h-2 = pastilla).
+       * Los inactivos son cuadrados pequeños (w-2 h-2 = punto).
+       * Haciendo click se salta directamente al slide correspondiente.
+       */}
+      <div className="absolute top-8 right-8 flex gap-2 z-20">
+        {slides.map((_s, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrent(i)}
+            className={`transition-all duration-300 rounded-full ${
+              i === current ? 'w-8 h-2 bg-green-400' : 'w-2 h-2 bg-white/40 hover:bg-white/60'
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* ── Badge de ubicación del slide actual ─────────────────────────── */}
+      <div className="absolute top-8 left-1/2 -translate-x-1/2 z-20">
+        <span className="glass pill text-white/70 text-xs">
+          <MapPin className="w-3 h-3 text-green-400" />
+          {slides[current].label} · Durania, Norte de Santander
+        </span>
+      </div>
+
+      {/* ── Contenido central ────────────────────────────────────────────────
+       * La opacidad del contenedor cambia de 0→1 al montar (var: loaded).
+       * Cada elemento hijo tiene su propia animación fadeUp con delays
+       * escalonados para crear una secuencia de aparición natural:
+       *   badge (0s) → título (0s) → subtítulo (0.2s) → desc (0.3s) → botones (0.4s)
+       */}
+      <div className={`relative z-10 text-center px-4 max-w-5xl mx-auto transition-all duration-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
+
+        {/* Badge categoría */}
+        <div className="pill bg-green-500/20 border border-green-500/40 text-green-400 mx-auto mb-6 animate-fade-in">
+          ✦ Turismo de Naturaleza · Colombia
+        </div>
+
+        {/* Título principal — tamaño responsivo con clamp() */}
+        <h1 className="font-serif font-black text-white mb-2 animate-fade-up" style={{ fontSize: 'clamp(4rem, 12vw, 9rem)', lineHeight: 0.9, letterSpacing: '-0.03em' }}>
+          Durania
+        </h1>
+
+        {/* Subtítulo con gradiente dorado */}
+        <p className="font-serif italic text-3xl md:text-4xl gradient-text-gold mb-6 animate-fade-up delay-200">
+          "La Tacita de Plata"
+        </p>
+
+        {/* Descripción traducida */}
+        <p className="text-white/70 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-up delay-300">
+          {t('hero.description')}
+        </p>
+
+        {/* Botones de acción */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-up delay-400">
+          {/* CTA principal: va a la sección de Naturaleza */}
+          <a
+            href="#naturaleza"
+            className="group relative overflow-hidden bg-green-500 hover:bg-green-400 text-black font-bold px-8 py-4 rounded-full transition-all duration-300 inline-flex items-center gap-2 glow-green"
+          >
+            <span className="relative z-10">{t('hero.cta')}</span>
+            <ChevronDown className="w-4 h-4 relative z-10 group-hover:translate-y-0.5 transition-transform" />
+          </a>
+          {/* CTA secundario: va directamente al Tour 360 */}
+          <a
+            href="/tour"
+            className="group glass border border-white/20 hover:border-amber-400/50 text-white font-semibold px-8 py-4 rounded-full transition-all duration-300 inline-flex items-center gap-2"
+          >
+            <Play className="w-4 h-4 text-amber-400" />
+            Tour 360
+          </a>
+        </div>
+      </div>
+
+      {/* ── Indicador de scroll ──────────────────────────────────────────────
+       * Línea vertical que crece (h-12 → h-16) al hacer hover.
+       * Invita visualmente al usuario a hacer scroll hacia abajo.
+       */}
+      <a href="#naturaleza" className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-white/50 hover:text-white transition-colors group">
+        <span className="text-xs tracking-widest uppercase">Scroll</span>
+        <div className="w-px h-12 bg-gradient-to-b from-white/50 to-transparent group-hover:h-16 transition-all" />
+      </a>
+
+      {/* ── Barra de estadísticas ────────────────────────────────────────────
+       * Anclada al fondo absoluto del Hero.
+       * glass-dark + divide-x crea la separación entre columnas.
+       * Los 4 datos clave dan contexto geográfico e informativo al visitante.
+       */}
+      <div className="absolute bottom-0 left-0 right-0 z-10">
+        <div className="glass-dark grid grid-cols-4 divide-x divide-white/10">
+          {[
+            { val: '47 km',  label: 'de Cúcuta'     },
+            { val: '80+',    label: 'Especies aves'  },
+            { val: '1.200',  label: 'msnm'           },
+            { val: '10+',    label: 'Senderos'        },
+          ].map(({ val, label }) => (
+            <div key={label} className="py-4 text-center">
+              <div className="text-green-400 font-bold text-xl">{val}</div>
+              <div className="text-white/50 text-xs">{label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\components\LodgingSection.jsx
+==============================================================================
+import { useTranslation } from 'react-i18next'
+import { ArrowUpRight } from 'lucide-react'
+
+const images = [
+  'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=700&q=85',
+  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=85',
+  'https://images.unsplash.com/photo-1475855581690-80accde3ae2b?w=700&q=85',
+  'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=700&q=85',
+]
+
+export default function LodgingSection() {
+  const { t } = useTranslation()
+  const types = t('sections.lodging.types', { returnObjects: true })
+
+  return (
+    <section id="hospedaje" className="section-dark relative overflow-hidden">
+      <div className="absolute top-1/2 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+          <div>
+            <span className="pill bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 mb-4 inline-flex">
+              🏡 Alojamiento
+            </span>
+            <h2 className="font-serif font-black text-white text-5xl md:text-6xl" style={{ lineHeight: 1 }}>
+              {t('sections.lodging.title')}
+            </h2>
+          </div>
+          <a href="#contacto" className="inline-flex items-center gap-2 glass border border-white/20 hover:border-cyan-400/50 text-white px-6 py-3 rounded-full transition-all text-sm font-medium">
+            Consultar disponibilidad
+            <ArrowUpRight className="w-4 h-4" />
+          </a>
+        </div>
+
+        {/* Masonry-style grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {types.map((type, i) => (
+            <div
+              key={i}
+              className="group relative rounded-2xl overflow-hidden card-hover cursor-pointer"
+              style={{ height: i % 2 === 0 ? '320px' : '260px' }}
+            >
+              <img
+                src={images[i]}
+                alt={type.title}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-600"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-5">
+                <h3 className="text-white font-bold text-base mb-1">{type.title}</h3>
+                <p className="text-white/40 text-xs leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300">{type.desc}</p>
+              </div>
+              <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-cyan-500/30 transition-all duration-300" />
+            </div>
+          ))}
+        </div>
+
+        <p className="text-white/30 text-center text-sm mt-8">{t('sections.lodging.contact')}</p>
+      </div>
+    </section>
+  )
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\components\NatureSection.jsx
+==============================================================================
+import { useTranslation } from 'react-i18next'
+import { Footprints, Bird, Waves, Droplets, CloudRain } from 'lucide-react'
+
+const cards = [
+  {
+    key: 'hiking',
+    icon: Footprints,
+    image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=85',
+    accent: '#4ade80',
+    big: true,
+  },
+  {
+    key: 'birds',
+    icon: Bird,
+    image: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=800&q=85',
+    accent: '#22d3ee',
+  },
+  {
+    key: 'rivers',
+    icon: Waves,
+    image: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=85',
+    accent: '#60a5fa',
+  },
+  {
+    key: 'lagoon',
+    icon: Droplets,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Arroyo_La_Barca-Durania%2C_Norte_de_Santander.jpg/800px-Arroyo_La_Barca-Durania%2C_Norte_de_Santander.jpg',
+    accent: '#34d399',
+  },
+  {
+    key: 'waterfall',
+    icon: CloudRain,
+    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=85',
+    accent: '#a78bfa',
+  },
+]
+
+export default function NatureSection() {
+  const { t } = useTranslation()
+
+  return (
+    <section id="naturaleza" className="section-dark">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-16">
+          <span className="pill bg-green-500/10 border border-green-500/30 text-green-400 mb-4 inline-flex">
+            🌿 Ecoturismo
+          </span>
+          <h2 className="font-serif font-black text-white text-5xl md:text-6xl mb-4" style={{ lineHeight: 1 }}>
+            {t('sections.nature.title')}
+          </h2>
+          <p className="text-white/50 text-lg max-w-xl">{t('sections.nature.subtitle')}</p>
+        </div>
+
+        {/* Bento grid */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+          {cards.map(({ key, icon: Icon, image, accent, big }) => (
+            <div
+              key={key}
+              className={`relative overflow-hidden rounded-3xl card-hover group cursor-pointer ${big ? 'md:col-span-6 md:row-span-2 min-h-[480px]' : 'md:col-span-6 lg:col-span-3 min-h-[220px]'}`}
+            >
+              {/* Image */}
+              <img
+                src={image}
+                alt={t(`sections.nature.${key}.title`)}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+
+              {/* Accent glow on hover */}
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-3xl"
+                style={{ background: `radial-gradient(circle at bottom left, ${accent}, transparent 70%)` }}
+              />
+
+              {/* Border glow */}
+              <div
+                className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-opacity-60 transition-all duration-500"
+                style={{ borderColor: accent + '40' }}
+              />
+
+              {/* Content */}
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <div
+                  className="w-10 h-10 rounded-2xl flex items-center justify-center mb-3"
+                  style={{ background: accent + '20', border: `1px solid ${accent}40` }}
+                >
+                  <Icon className="w-5 h-5" style={{ color: accent }} />
+                </div>
+                <h3 className="font-bold text-white text-xl mb-2">
+                  {t(`sections.nature.${key}.title`)}
+                </h3>
+                <p className={`text-white/60 text-sm leading-relaxed transition-all duration-300 ${big ? 'max-h-40' : 'max-h-0 overflow-hidden group-hover:max-h-40'}`}>
+                  {t(`sections.nature.${key}.desc`)}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\components\Navbar.jsx
+==============================================================================
+/**
+ * =============================================================================
+ * Navbar.jsx — Barra de navegación principal
+ * =============================================================================
+ *
+ * RESPONSABILIDADES:
+ * ──────────────────
+ * - Mostrar el logo y nombre del sitio con enlace al inicio (#inicio).
+ * - Listar los links de navegación hacia cada sección de la página.
+ * - Cambiar visualmente al hacer scroll (transparente → fondo oscuro blur).
+ * - Mostrar el botón de cambio de idioma (ES ↔ EN) con i18n.
+ * - Ofrecer un botón "Contactar" como CTA rápido.
+ * - En móvil/tablet: reemplazar el menú por un drawer lateral animado.
+ *
+ * ESTADOS:
+ * ────────
+ * - isOpen   (boolean) → Controla si el menú móvil (drawer) está abierto.
+ * - scrolled (boolean) → true cuando el usuario ha hecho scroll > 60px.
+ *                        Activa el fondo oscuro del navbar.
+ *
+ * COMPORTAMIENTO DE SCROLL:
+ * ─────────────────────────
+ * Se usa un useEffect con addEventListener('scroll') para detectar la posición.
+ * El listener se limpia en el return del useEffect (cleanup) para evitar
+ * memory leaks cuando el componente se desmonta.
+ *
+ * CAMBIO DE IDIOMA:
+ * ─────────────────
+ * La función toggleLang() llama a i18n.changeLanguage() alternando entre
+ * 'es' y 'en'. Todos los componentes que usen useTranslation() se
+ * re-renderizan automáticamente con el nuevo idioma.
+ *
+ * RESPONSIVE:
+ * ───────────
+ * - xl (≥1280px): Menú horizontal completo visible.
+ * - < xl:         Menú oculto, se muestra botón hamburguesa (☰).
+ *                 El drawer se desliza desde la derecha con translate-x.
+ *
+ * ACCESIBILIDAD:
+ * ──────────────
+ * - El overlay oscuro detrás del drawer cierra el menú al hacer click.
+ * - Los botones tienen iconos con texto visible o atributos implícitos.
+ * =============================================================================
+ */
+
+import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Menu, X, Globe } from 'lucide-react'
+
+/**
+ * navLinks — Array de objetos que definen cada enlace de navegación.
+ * - key:  Clave de traducción en los archivos JSON (ej: 'nature' → t('nav.nature'))
+ * - href: ID del anchor de la sección destino (scroll suave via CSS)
+ */
+const navLinks = [
+  { key: 'nature',      href: '#naturaleza' },
+  { key: 'gastronomy',  href: '#gastronomia' },
+  { key: 'apiculture',  href: '#apiturismo' },
+  { key: 'agriculture', href: '#agricultura' },
+  { key: 'culture',     href: '#cultura' },
+  { key: 'events',      href: '#ferias' },
+  { key: 'lodging',     href: '#hospedaje' },
+  { key: 'realEstate',  href: '#inmobiliario' },
+  { key: 'contact',     href: '#contacto' },
+]
+
+export default function Navbar() {
+  const { t, i18n } = useTranslation()
+
+  /** isOpen: controla visibilidad del drawer móvil */
+  const [isOpen,   setIsOpen]   = useState(false)
+
+  /** scrolled: true si el usuario ha scrolleado más de 60px desde el top */
+  const [scrolled, setScrolled] = useState(false)
+
+  /**
+   * Efecto de scroll: agrega listener al montar, lo limpia al desmontar.
+   * El umbral de 60px da tiempo para que el hero sea visible sin el navbar
+   * cambiando demasiado rápido.
+   */
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60)
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll) // cleanup
+  }, [])
+
+  /**
+   * toggleLang — Alterna el idioma activo entre Español e Inglés.
+   * i18n.changeLanguage() actualiza el contexto global de React i18next.
+   */
+  const toggleLang = () =>
+    i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')
+
+  return (
+    <>
+      {/*
+       * nav — Barra principal fija (position: fixed, z-index: 50).
+       * Cuando scrolled=true: aplica bg-black/80 con blur para legibilidad.
+       * Cuando scrolled=false: transparente para no tapar el hero.
+       */}
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? 'bg-black/80 backdrop-blur-xl border-b border-white/10 py-3'
+          : 'bg-transparent py-5'
+      }`}>
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+
+          {/* ── Logo — Bandera oficial de Durania (Wikimedia Commons, CC BY 3.0) ── */}
+          <a href="#inicio" className="flex items-center gap-3 group">
+            <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-lg ring-1 ring-white/20 group-hover:ring-green-400/60 transition-all duration-300 flex-shrink-0">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/1/12/Flag_of_Durania_%28Norte_de_Santander%29.svg"
+                alt="Bandera de Durania"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="leading-none">
+              <div className="font-serif font-bold text-white text-lg">Durania</div>
+              <div className="text-[10px] text-white/40 tracking-widest uppercase">Norte de Santander</div>
+            </div>
+          </a>
+
+          {/* ── Links de escritorio ──
+           * Solo visible en pantallas xl (≥1280px).
+           * Cada link tiene una línea verde animada debajo (scale-x 0→1 en hover).
+           */}
+          <div className="hidden xl:flex items-center gap-1">
+            {navLinks.map(link => (
+              <a
+                key={link.key}
+                href={link.href}
+                className="relative px-3 py-2 text-sm text-white/60 hover:text-white transition-colors duration-200 group"
+              >
+                {t(`nav.${link.key}`)}
+                {/* Línea subrayada animada: scaleX 0 → 1 en hover */}
+                <span className="absolute bottom-0 left-3 right-3 h-px bg-green-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+              </a>
+            ))}
+          </div>
+
+          {/* ── Controles derechos: idioma + CTA + botón hamburguesa ── */}
+          <div className="flex items-center gap-3">
+
+            {/* Botón de idioma — muestra el idioma al que se puede CAMBIAR */}
+            <button
+              onClick={toggleLang}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-white/20 text-white/70 hover:border-green-400 hover:text-green-400 text-sm font-medium transition-all duration-200"
+            >
+              <Globe className="w-3.5 h-3.5" />
+              {i18n.language === 'es' ? 'EN' : 'ES'}
+            </button>
+
+            {/* CTA "Contacto" — visible solo en md+ */}
+            <a href="#contacto" className="hidden md:inline-flex items-center bg-green-500 hover:bg-green-400 text-black font-bold text-sm px-5 py-2 rounded-full transition-all duration-200">
+              {t('nav.contact')}
+            </a>
+
+            {/* Botón hamburguesa — solo en < xl */}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="xl:hidden w-9 h-9 flex items-center justify-center rounded-full border border-white/20 text-white"
+            >
+              {isOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/*
+       * Drawer móvil — Panel lateral que se desliza desde la derecha.
+       * Estructura de dos capas:
+       *   1. Overlay oscuro (inset-0) → cierra el drawer al hacer click fuera.
+       *   2. Panel blanco (w-72) → contiene los links y el botón de idioma.
+       *
+       * La visibilidad se controla con `visibility` (no display:none) para
+       * que la transición de opacidad/translate funcione correctamente.
+       */}
+      <div className={`fixed inset-0 z-40 xl:hidden transition-all duration-400 ${isOpen ? 'visible' : 'invisible'}`}>
+        {/* Overlay — cierra el drawer al hacer click */}
+        <div
+          className={`absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}
+          onClick={() => setIsOpen(false)}
+        />
+        {/* Panel del drawer — se desliza con translateX */}
+        <div className={`absolute top-0 right-0 bottom-0 w-72 bg-[#0d0d0d] border-l border-white/10 p-8 transition-transform duration-400 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          <div className="flex justify-end mb-8">
+            <button onClick={() => setIsOpen(false)} className="text-white/50 hover:text-white">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <nav className="space-y-1">
+            {navLinks.map(link => (
+              <a
+                key={link.key}
+                href={link.href}
+                onClick={() => setIsOpen(false)} // Cierra el drawer al navegar
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition-all duration-200"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                {t(`nav.${link.key}`)}
+              </a>
+            ))}
+          </nav>
+          {/* Botón de idioma en el drawer */}
+          <div className="mt-8 pt-8 border-t border-white/10">
+            <button onClick={toggleLang} className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-white/20 text-white/60 hover:text-green-400 hover:border-green-400 transition-all">
+              <Globe className="w-4 h-4" />
+              {i18n.language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\components\RealEstateSection.jsx
+==============================================================================
+import { useTranslation } from 'react-i18next'
+import { LandPlot, TreePine, House, MapPinned, ArrowRight } from 'lucide-react'
+
+const icons   = [LandPlot, TreePine, MapPinned, House]
+const accents = ['#4ade80', '#34d399', '#22d3ee', '#a3e635']
+
+export default function RealEstateSection() {
+  const { t } = useTranslation()
+  const types = t('sections.realEstate.types', { returnObjects: true })
+
+  return (
+    <section id="inmobiliario" className="section-light relative overflow-hidden">
+      {/* Full-width bg image */}
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&q=80"
+          alt="Paisaje Durania"
+          className="w-full h-full object-cover opacity-10"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#111111] via-[#111111]/80 to-[#111111]" />
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="text-center mb-16">
+          <span className="pill bg-lime-500/10 border border-lime-500/30 text-lime-400 mb-4 inline-flex mx-auto">
+            🏘️ Bienes Raíces Rurales
+          </span>
+          <h2 className="font-serif font-black text-white text-5xl md:text-6xl mb-4" style={{ lineHeight: 1 }}>
+            {t('sections.realEstate.title')}
+          </h2>
+          <p className="text-white/40 max-w-lg mx-auto">{t('sections.realEstate.subtitle')}</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          {types.map((type, i) => {
+            const Icon = icons[i]
+            const accent = accents[i]
+            return (
+              <div
+                key={i}
+                className="group glass rounded-2xl p-6 card-hover cursor-pointer border border-white/5 hover:border-white/10"
+              >
+                <div
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5 transition-all duration-300"
+                  style={{ background: accent + '15', border: `1px solid ${accent}30` }}
+                >
+                  <Icon className="w-6 h-6 transition-transform duration-300 group-hover:scale-110" style={{ color: accent }} />
+                </div>
+                <h3 className="text-white font-bold text-lg mb-2">{type.title}</h3>
+                <p className="text-white/40 text-sm leading-relaxed">{type.desc}</p>
+                <div
+                  className="mt-4 flex items-center gap-1 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ color: accent }}
+                >
+                  Ver más <ArrowRight className="w-3 h-3" />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        <div className="text-center">
+          <p className="text-white/30 text-sm mb-6">{t('sections.realEstate.cta')}</p>
+          <a
+            href="#contacto"
+            className="inline-flex items-center gap-2 bg-white text-black font-bold px-10 py-4 rounded-full hover:bg-green-400 transition-all duration-300"
+          >
+            Consultar propiedades
+            <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\components\Stats.jsx
+==============================================================================
+/**
+ * =============================================================================
+ * Stats.jsx — Banda de estadísticas y marquee de categorías
+ * =============================================================================
+ *
+ * Sección compacta ubicada justo debajo del Hero. Sirve como separador
+ * visual y comunicador de datos clave sobre Durania.
+ *
+ * ESTRUCTURA:
+ * ───────────
+ * 1. MARQUEE (banda desplazante)
+ *    - Lista de categorías turísticas con emojis que se desplaza
+ *      horizontalmente en loop continuo (30s por ciclo).
+ *    - El contenido se repite 4 veces para que el loop sea seamless:
+ *      cuando termina el primer bloque, el segundo ya empieza,
+ *      sin salto visual perceptible.
+ *    - overflow-hidden en el contenedor oculta lo que está fuera del viewport.
+ *
+ * 2. GRID DE ESTADÍSTICAS
+ *    - 4 métricas en grid 2×2 (móvil) o 1×4 (desktop).
+ *    - Los valores son hardcoded (no traducibles) porque son números iguales
+ *      en ambos idiomas.
+ *    - Las etiquetas sí usan t() para traducirse (ej: "km from Cúcuta" en EN).
+ *    - gap-px + bg-white/5 crea un efecto de "rejilla" entre celdas sin
+ *      necesidad de borders explícitos.
+ *
+ * COLORES POR MÉTRICA:
+ * ────────────────────
+ * - 47 km   → text-green-400  (distancia — concepto de cercanía/acceso)
+ * - 80+     → text-cyan-400   (aves — concepto de naturaleza/cielo)
+ * - 1.200   → text-amber-400  (altitud — concepto de montaña/calor)
+ * - 10+     → text-purple-400 (senderos — concepto de exploración)
+ * =============================================================================
+ */
+
+import { useTranslation } from 'react-i18next'
+
+/**
+ * items — Datos de las 4 estadísticas del municipio.
+ * - val:   Valor numérico a mostrar (string formateado).
+ * - label: Clave de traducción para la etiqueta descriptiva.
+ * - color: Clase de Tailwind para el color del valor.
+ */
+const items = [
+  { val: '47 km', label: 'stats.kmCucuta',  color: 'text-green-400'  },
+  { val: '80+',   label: 'stats.birds',     color: 'text-cyan-400'   },
+  { val: '1.200', label: 'stats.altitude',  color: 'text-amber-400'  },
+  { val: '10+',   label: 'stats.trails',    color: 'text-purple-400' },
+]
+
+export default function Stats() {
+  const { t } = useTranslation()
+
+  return (
+    <section className="bg-[#0a0a0a] py-6 border-y border-white/5">
+
+      {/* ── Marquee de categorías ─────────────────────────────────────────────
+       * Contenedor con overflow-hidden para clipear el contenido animado.
+       * El div interior tiene flex + whitespace-nowrap para que los items
+       * no rompan línea y la animación sea horizontal.
+       *
+       * Truco del loop seamless:
+       * - El contenido se duplica 4 veces con flatMap().
+       * - La animación marquee mueve el elemento -50% de su ancho total.
+       * - Cuando llega al 50%, visualmente está en el mismo punto de inicio.
+       * - Resultado: loop infinito sin saltos.
+       */}
+      <div className="overflow-hidden mb-6">
+        <div className="flex gap-12 animate-marquee whitespace-nowrap">
+          {[...Array(4)].flatMap(() => [
+            '🌿 Senderismo',
+            '🐝 Apiturismo',
+            '☕ Café de Montaña',
+            '🦜 Avistamiento de Aves',
+            '🌊 Ríos y Pozos',
+            '🌾 Agroturismo',
+            '🏡 Hospedaje Rural',
+            '🎉 Ferias & Tradiciones',
+          ]).map((item, i) => (
+            <span key={i} className="text-white/30 text-sm font-medium">{item}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Grid de estadísticas ──────────────────────────────────────────────
+       * gap-px + bg-white/5 en el contenedor crea líneas divisorias sutiles
+       * entre celdas sin necesidad de borders individuales.
+       * Cada celda tiene su propio bg-[#0d0d0d] para "tapar" el bg del grid.
+       */}
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5 rounded-2xl overflow-hidden">
+          {items.map(({ val, label, color }) => (
+            <div key={label} className="bg-[#0d0d0d] py-8 text-center">
+              {/* Valor numérico con color diferenciado por métrica */}
+              <div className={`text-4xl font-black font-serif ${color} mb-1`}>{val}</div>
+              {/* Etiqueta traducida en mayúsculas con tracking amplio */}
+              <div className="text-white/40 text-xs uppercase tracking-wider">{t(label)}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\locales\en.json
+==============================================================================
+{
+  "nav": {
+    "home": "Home",
+    "nature": "Nature",
+    "gastronomy": "Gastronomy",
+    "apiculture": "Apitourism",
+    "agriculture": "Agriculture",
+    "culture": "Culture",
+    "events": "Events",
+    "lodging": "Lodging",
+    "realEstate": "Real Estate",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Durania",
+    "subtitle": "The Silver Cup",
+    "description": "Discover a natural paradise in the heart of Norte de Santander. Coffee, nature, culture and adventure await you.",
+    "cta": "Explore destinations",
+    "ctaContact": "Contact us"
+  },
+  "stats": {
+    "trails": "Trails",
+    "birds": "Bird species",
+    "altitude": "masl altitude",
+    "kmCucuta": "km from Cúcuta"
+  },
+  "sections": {
+    "nature": {
+      "title": "Nature & Adventure",
+      "subtitle": "Immerse yourself in the green landscapes, trails and water bodies that make Durania a unique destination.",
+      "hiking": {
+        "title": "Hiking",
+        "desc": "Walk paths surrounded by lush vegetation and stunning views of the Norte de Santander coffee landscape. Hire local guides for the full experience."
+      },
+      "birds": {
+        "title": "Bird Watching",
+        "desc": "Durania is a refuge for dozens of bird species. Its tropical climate and diverse vegetation make it an ideal destination for birdwatching lovers."
+      },
+      "rivers": {
+        "title": "Rivers & Pools",
+        "desc": "The Zulia River, streams La Lejía, La Ocarena and Coladera, along with the famous Pozo del Amor and Pozo de la Hamaca at Laguna de la Barca, offer refreshing aquatic experiences."
+      },
+      "lagoon": {
+        "title": "Laguna de la Barca",
+        "desc": "55 minutes from the central park, this lagoon is the municipality's natural treasure. Surrounded by mountains and nature, it's perfect for relaxation and adventure."
+      },
+      "waterfall": {
+        "title": "El Saladito Waterfall",
+        "desc": "An impressive waterfall of approximately 30 meters high located in the El Almendral village. A natural spectacle you cannot miss."
+      }
+    },
+    "gastronomy": {
+      "title": "Gastronomy",
+      "subtitle": "Durania's cuisine fuses traditional Santandereano flavors with fresh countryside ingredients.",
+      "items": [
+        {
+          "name": "Norte Santandereano Mute",
+          "desc": "Traditional soup prepared with corn, pork, giblets and local spices. The most emblematic dish of the region."
+        },
+        {
+          "name": "Carnes a la Vara",
+          "desc": "Meats slowly roasted over embers on a wooden spit, an ancestral technique that preserves all the juices and flavors."
+        },
+        {
+          "name": "Roasted Goat",
+          "desc": "Local goat, raised on natural pastures, is a delicacy that reflects the livestock wealth of the municipality."
+        },
+        {
+          "name": "Durania Coffee",
+          "desc": "Coffee grown on mountain slopes, with unmatched aroma and flavor. The reason Durania was called 'The Silver Cup'."
+        },
+        {
+          "name": "Honey & Bee Products",
+          "desc": "Pure locally harvested honey, along with pollen and propolis, direct products from Durania's beehives."
+        },
+        {
+          "name": "River Fish",
+          "desc": "Fresh fish from the Zulia River and local streams, prepared with traditional peasant cuisine recipes."
+        }
+      ]
+    },
+    "apiculture": {
+      "title": "Apiculture & Apitourism",
+      "subtitle": "Live the unique experience of becoming a Guardian of the Bees and discover the fascinating world of honey.",
+      "what": {
+        "title": "What is Apitourism?",
+        "desc": "Apitourism is one of the most sustainable forms of tourism. It combines knowledge of the bee world, the practice of beekeeping and its vital role in biodiversity, with local gastronomic experiences and direct contact with nature."
+      },
+      "tour": {
+        "title": "Day Tour",
+        "desc": "From Cúcuta (47 km), departing at 6:30 AM from Parque Colón. Includes specialized transport, typical lunch, full protective equipment and apicultural kit with honey as a gift.",
+        "price": "Adult: $145,000 COP",
+        "priceKid": "Children (5-9 years): $130,000 COP"
+      },
+      "includes": "Tour includes",
+      "includesList": [
+        "Access to the beehives",
+        "Protective equipment (overalls, boots, mask, gloves)",
+        "Specialized apitourism guide",
+        "Apiculture kit with honey (143g) and dried fruits",
+        "Educational workshop on honeys and hive products",
+        "'Guardian of the Bees' certificate",
+        "Urban tour of Durania",
+        "Travel insurance"
+      ]
+    },
+    "agriculture": {
+      "title": "Countryside & Agriculture",
+      "subtitle": "Discover the agricultural wealth that sustains and gives identity to the municipality of Durania.",
+      "items": [
+        {
+          "title": "Coffee Growing",
+          "desc": "Coffee is the soul of Durania. Visit coffee farms, learn about the collection, processing and roasting of mountain coffee."
+        },
+        {
+          "title": "Livestock",
+          "desc": "Cattle and goat farming is an economic pillar. Goat and dairy products are a reflection of this productive tradition."
+        },
+        {
+          "title": "Fish Farming",
+          "desc": "Fish cultivation in natural ponds. Visit fish farms and enjoy the freshest fish directly from the source."
+        },
+        {
+          "title": "Agrotourism Farms",
+          "desc": "Experience rural life: harvest fruits, learn about crops and enjoy campesino hospitality on local farms."
+        }
+      ]
+    },
+    "culture": {
+      "title": "Culture & History",
+      "subtitle": "Durania holds centuries of history, from indigenous peoples to the traditions preserved today.",
+      "history": {
+        "title": "Municipal History",
+        "desc": "Durania was originally inhabited by the Oporomas tribe, a result of Karib-Chibcha mixing. The municipality's name honors General Justo Leónidas Durán, a 19th century liberal revolutionary. It was known as 'The Silver Cup' for its coffee production boom."
+      },
+      "sites": {
+        "title": "Historic Sites",
+        "list": [
+          "Parque Principal Justo Leónidas Durán",
+          "Basílica San José",
+          "Casa de la Cultura (Casa del General Rafael Leal)",
+          "Escalinatas with Simon Bolívar statue",
+          "Virgen del Carmen Monument (3 km from center)",
+          "Olympic Swimming Pool (built 1937-1940)"
+        ]
+      },
+      "traditions": {
+        "title": "Traditions",
+        "desc": "Duranenses are known for their hospitality, joy and pride in their roots. The San Nicolás patron saint festivals, vallenata and carranguera music, and local crafts are living parts of their cultural identity."
+      }
+    },
+    "events": {
+      "title": "Fairs & Events",
+      "subtitle": "The municipality of Durania celebrates year-round with fairs, festivities and events that bring the entire community together.",
+      "items": [
+        {
+          "month": "December",
+          "title": "San Nicolás Festival",
+          "desc": "Patron saint celebrations honoring San Nicolás. Music, dancing, gastronomy and cultural events that fill the streets of the municipality with life."
+        },
+        {
+          "month": "Year-round",
+          "title": "Agricultural Fair",
+          "desc": "Exhibition and sale of local agricultural products: coffee, honey, fruits, vegetables and crafts made by the region's farmers."
+        },
+        {
+          "month": "June",
+          "title": "Apitourism Festival",
+          "desc": "Celebration of the bee world with demonstrations, honey tastings, educational workshops and special tours to the region's apiaries."
+        },
+        {
+          "month": "Season",
+          "title": "Coffee Harvest",
+          "desc": "During harvest season, farms open their doors for visitors to participate in coffee bean collection."
+        }
+      ]
+    },
+    "lodging": {
+      "title": "Lodging",
+      "subtitle": "Find the perfect place to rest in Durania, from rural farms to traditional inns.",
+      "types": [
+        {
+          "title": "Tourist Farms",
+          "desc": "Stay on farms surrounded by nature, with country breakfast included, hammocks and views of the coffee landscape."
+        },
+        {
+          "title": "Country Inns",
+          "desc": "Family accommodation in the heart of the municipality, with traditional cuisine and personalized attention from local hosts."
+        },
+        {
+          "title": "Mountain Cabins",
+          "desc": "Rustic cabins in the midst of nature, perfect for disconnecting and enjoying the silence and country breeze."
+        },
+        {
+          "title": "Hotels in Town",
+          "desc": "Simple and comfortable hotels in the municipal center, close to historic sites and the main park."
+        }
+      ],
+      "contact": "For bookings and availability, contact us directly."
+    },
+    "realEstate": {
+      "title": "Real Estate",
+      "subtitle": "Durania is the ideal place to live, invest or have your retreat farm in the midst of nature.",
+      "types": [
+        {
+          "title": "Farms for Sale",
+          "desc": "Rural properties with arable land, water sources and panoramic views. Ideal for agribusiness or rural tourism."
+        },
+        {
+          "title": "Farms for Rent",
+          "desc": "Farm rentals by season or permanent for families, groups or entrepreneurs in the tourism sector."
+        },
+        {
+          "title": "Rural Lots",
+          "desc": "Lots with deeds in high-potential areas for building country homes or ecotourism projects."
+        },
+        {
+          "title": "Country Houses",
+          "desc": "Homes built in rural areas, with designs that integrate regional architecture into the natural environment."
+        }
+      ],
+      "cta": "For information on available properties, contact us."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "subtitle": "Plan your visit to Durania. We are ready to help you live the best experience.",
+      "address": "Durania, Norte de Santander, Colombia",
+      "phone": "Phone",
+      "email": "Email",
+      "hours": "Monday to Friday: 8:00 AM - 5:00 PM",
+      "form": {
+        "name": "Your name",
+        "email": "Your email",
+        "message": "How can we help you?",
+        "send": "Send message"
+      },
+      "social": "Follow us on social media"
+    }
+  },
+  "footer": {
+    "tagline": "The Silver Cup of Norte de Santander",
+    "rights": "All rights reserved",
+    "madeWith": "Made with love from Durania"
+  }
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\components\react\locales\es.json
+==============================================================================
+{
+  "nav": {
+    "home": "Inicio",
+    "nature": "Naturaleza",
+    "gastronomy": "Gastronomía",
+    "apiculture": "Apiturismo",
+    "agriculture": "Agricultura",
+    "culture": "Cultura",
+    "events": "Ferias",
+    "lodging": "Hospedaje",
+    "realEstate": "Inmobiliario",
+    "contact": "Contacto"
+  },
+  "hero": {
+    "title": "Durania",
+    "subtitle": "La Tacita de Plata",
+    "description": "Descubre un paraíso natural en el corazón de Norte de Santander. Café, naturaleza, cultura y aventura te esperan.",
+    "cta": "Explorar destinos",
+    "ctaContact": "Contáctanos"
+  },
+  "stats": {
+    "trails": "Senderos",
+    "birds": "Especies de aves",
+    "altitude": "msnm altitud",
+    "kmCucuta": "km de Cúcuta"
+  },
+  "sections": {
+    "nature": {
+      "title": "Naturaleza y Aventura",
+      "subtitle": "Sumérgete en los paisajes verdes, senderos y cuerpos de agua que hacen de Durania un destino único.",
+      "hiking": {
+        "title": "Senderismo",
+        "desc": "Recorre caminos rodeados de vegetación exuberante y vistas impresionantes del paisaje cafetero norte santandereano. Contrata guías locales para vivir la experiencia completa."
+      },
+      "birds": {
+        "title": "Avistamiento de Aves",
+        "desc": "Durania es un refugio para decenas de especies de aves. Su clima tropical y vegetación diversa lo convierten en un destino ideal para los amantes del aviturismo."
+      },
+      "rivers": {
+        "title": "Ríos y Pozos",
+        "desc": "El río Zulia, quebradas La Lejía, La Ocarena y la Coladera, junto al famoso Pozo del Amor y Pozo de la Hamaca en la Laguna de la Barca, ofrecen refrescantes experiencias acuáticas."
+      },
+      "lagoon": {
+        "title": "Laguna de la Barca",
+        "desc": "A 55 minutos del parque central, esta laguna es el tesoro natural del municipio. Rodeada de montañas y naturaleza, es perfecta para el descanso y la aventura."
+      },
+      "waterfall": {
+        "title": "Cascada El Saladito",
+        "desc": "Una impresionante cascada de aproximadamente 30 metros de altura ubicada en la vereda El Almendral. Un espectáculo natural que no te puedes perder."
+      }
+    },
+    "gastronomy": {
+      "title": "Gastronomía",
+      "subtitle": "La cocina de Durania fusiona sabores tradicionales santandereanos con ingredientes frescos del campo.",
+      "items": [
+        {
+          "name": "Mute Norte Santandereano",
+          "desc": "Sopa tradicional preparada con maíz, cerdo, menudencias y especias locales. El plato más emblemático de la región."
+        },
+        {
+          "name": "Carnes a la Vara",
+          "desc": "Carnes asadas lentamente sobre brasas en vara de madera, técnica ancestral que conserva todos los jugos y sabores."
+        },
+        {
+          "name": "Cabrito Asado",
+          "desc": "El cabrito de la región, criado en pastizales naturales, es una delicia que refleja la riqueza ganadera del municipio."
+        },
+        {
+          "name": "Café de Durania",
+          "desc": "Café cultivado en las laderas de la montaña, con aroma y sabor inigualables. La razón por la que Durania fue llamada 'La Tacita de Plata'."
+        },
+        {
+          "name": "Miel y Productos Apícolas",
+          "desc": "Mieles puras cosechadas localmente, junto con polen y propóleo, productos directos de las colmenas de Durania."
+        },
+        {
+          "name": "Pescado de Río",
+          "desc": "Peces frescos del río Zulia y quebradas locales, preparados con recetas tradicionales de la cocina campesina."
+        }
+      ]
+    },
+    "apiculture": {
+      "title": "Apicultura y Apiturismo",
+      "subtitle": "Vive la experiencia única de convertirte en Guardián de las Abejas y descubrir el fascinante mundo de la miel.",
+      "what": {
+        "title": "¿Qué es el Apiturismo?",
+        "desc": "El apiturismo es una de las formas más sostenibles de turismo. Combina el conocimiento del mundo de las abejas, la práctica de la apicultura y su rol vital en la biodiversidad, con experiencias gastronómicas locales y contacto directo con la naturaleza."
+      },
+      "tour": {
+        "title": "Tour de un Día",
+        "desc": "Desde Cúcuta (47 km), con salida a las 6:30 AM desde el Parque Colón. Incluye transporte especializado, almuerzo típico, equipo de protección completo y kit apícola con miel de regalo.",
+        "price": "Adulto: $145.000 COP",
+        "priceKid": "Niños (5-9 años): $130.000 COP"
+      },
+      "includes": "El tour incluye",
+      "includesList": [
+        "Acceso a los panales de abejas",
+        "Equipo de protección (overol, botas, careta, guantes)",
+        "Guía especializado en apiturismo",
+        "Kit apícola con miel (143 gr) y frutas deshidratadas",
+        "Taller educativo sobre mieles y productos de la colmena",
+        "Certificado de 'Guardián de las Abejas'",
+        "Recorrido urbano por Durania",
+        "Seguro de viaje"
+      ]
+    },
+    "agriculture": {
+      "title": "Campo y Agricultura",
+      "subtitle": "Conoce la riqueza agropecuaria que sostiene y da identidad al municipio de Durania.",
+      "items": [
+        {
+          "title": "Caficultura",
+          "desc": "El café es el alma de Durania. Visita fincas cafeteras, conoce el proceso de recolección, beneficio y tueste del café de montaña."
+        },
+        {
+          "title": "Ganadería",
+          "desc": "La ganadería vacuna y caprina es pilar económico. El cabrito y los productos lácteos son reflejo de esta tradición productiva."
+        },
+        {
+          "title": "Piscicultura",
+          "desc": "Cultivo de peces en estanques naturales. Visita fincas piscícolas y disfruta del pescado más fresco directamente de la fuente."
+        },
+        {
+          "title": "Fincas Agroturísticas",
+          "desc": "Vive la experiencia del campo: recolecta frutas, aprende sobre cultivos y disfruta de la hospitalidad campesina en fincas locales."
+        }
+      ]
+    },
+    "culture": {
+      "title": "Cultura e Historia",
+      "subtitle": "Durania guarda siglos de historia, desde los pueblos indígenas hasta las tradiciones que se conservan hoy.",
+      "history": {
+        "title": "Historia del Municipio",
+        "desc": "Durania fue habitada originalmente por la tribu de los Oporomas, resultado de un mestizaje Karib-Chibcha. El nombre del municipio honra al General Justo Leónidas Durán, revolucionario liberal del siglo XIX. Fue conocida como 'La Tacita de Plata' por su auge en la producción cafetera."
+      },
+      "sites": {
+        "title": "Sitios Históricos",
+        "list": [
+          "Parque Principal Justo Leónidas Durán",
+          "Basílica San José",
+          "Casa de la Cultura (Casa del General Rafael Leal)",
+          "Escalinatas con estatua de Simón Bolívar",
+          "Monumento a la Virgen del Carmen (3 km del centro)",
+          "Piscina Olímpica (construida 1937-1940)"
+        ]
+      },
+      "traditions": {
+        "title": "Tradiciones",
+        "desc": "Los duranenses son conocidos por su hospitalidad, alegría y orgullo por sus raíces. Las fiestas patronales de San Nicolás, la música vallenata y carranguera, y las artesanías locales son parte viva de su identidad cultural."
+      }
+    },
+    "events": {
+      "title": "Ferias y Eventos",
+      "subtitle": "El municipio de Durania celebra todo el año con ferias, festividades y eventos que reúnen a toda la comunidad.",
+      "items": [
+        {
+          "month": "Diciembre",
+          "title": "Fiestas de San Nicolás",
+          "desc": "Festividades patronales en honor a San Nicolás. Música, baile, gastronomía y eventos culturales que llenan de vida las calles del municipio."
+        },
+        {
+          "month": "Todo el año",
+          "title": "Feria Agrícola",
+          "desc": "Exposición y venta de productos agropecuarios locales: café, miel, frutas, verduras y artesanías elaboradas por los campesinos de la región."
+        },
+        {
+          "month": "Junio",
+          "title": "Festival de Apiturismo",
+          "desc": "Celebración del mundo apícola con demostraciones, catas de miel, talleres educativos y tours especiales a los apiarios de la región."
+        },
+        {
+          "month": "Temporada",
+          "title": "Cosecha Cafetera",
+          "desc": "Durante la temporada de cosecha, las fincas abren sus puertas para que los visitantes participen en la recolección del grano de café."
+        }
+      ]
+    },
+    "lodging": {
+      "title": "Hospedaje",
+      "subtitle": "Encuentra el lugar perfecto para descansar en Durania, desde fincas campestres hasta posadas tradicionales.",
+      "types": [
+        {
+          "title": "Fincas Turísticas",
+          "desc": "Alójate en fincas rodeadas de naturaleza, con desayuno campesino incluido, hamacas y vistas al paisaje cafetero."
+        },
+        {
+          "title": "Posadas Campestres",
+          "desc": "Alojamiento familiar en el corazón del municipio, con cocina tradicional y atención personalizada por parte de los anfitriones locales."
+        },
+        {
+          "title": "Cabañas en la Montaña",
+          "desc": "Cabañas rústicas en medio de la naturaleza, perfectas para desconectarte y disfrutar del silencio y la brisa del campo."
+        },
+        {
+          "title": "Hoteles en el Casco Urbano",
+          "desc": "Hoteles sencillos y cómodos en el centro del municipio, cerca de los sitios históricos y el parque principal."
+        }
+      ],
+      "contact": "Para reservas y disponibilidad, contáctenos directamente."
+    },
+    "realEstate": {
+      "title": "Inmobiliario",
+      "subtitle": "Durania es el lugar ideal para vivir, invertir o tener tu finca de retiro en plena naturaleza.",
+      "types": [
+        {
+          "title": "Fincas en Venta",
+          "desc": "Propiedades rurales con terrenos cultivables, fuentes de agua y vistas panorámicas. Ideales para agronegocio o turismo rural."
+        },
+        {
+          "title": "Fincas en Arriendo",
+          "desc": "Alquiler de fincas por temporada o permanente para familias, grupos o emprendedores del sector turístico."
+        },
+        {
+          "title": "Lotes Rurales",
+          "desc": "Lotes con escrituras en zonas de alto potencial para construcción de vivienda campestre o proyectos ecoturísticos."
+        },
+        {
+          "title": "Casas Campestres",
+          "desc": "Viviendas construidas en zonas rurales, con diseños que integran la arquitectura regional al entorno natural."
+        }
+      ],
+      "cta": "Para información de propiedades disponibles, contáctenos."
+    },
+    "contact": {
+      "title": "Contáctanos",
+      "subtitle": "Planea tu visita a Durania. Estamos listos para ayudarte a vivir la mejor experiencia.",
+      "address": "Durania, Norte de Santander, Colombia",
+      "phone": "Teléfono",
+      "email": "Correo",
+      "hours": "Lunes a Viernes: 8:00 AM - 5:00 PM",
+      "form": {
+        "name": "Tu nombre",
+        "email": "Tu correo",
+        "message": "¿En qué podemos ayudarte?",
+        "send": "Enviar mensaje"
+      },
+      "social": "Síguenos en redes"
+    }
+  },
+  "footer": {
+    "tagline": "La Tacita de Plata de Norte de Santander",
+    "rights": "Todos los derechos reservados",
+    "madeWith": "Hecho con amor por Durania"
+  }
+}
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\content\config.ts
+==============================================================================
+import { defineCollection, z } from 'astro:content';
+
+const informativas = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    heroImage: z.string().optional(),
+  }),
+});
+
+const propiedades = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    price: z.string(),
+    climate: z.string(),
+    area: z.string(),
+    panorama: z.string(),
+    isAvailable: z.boolean(),
+  }),
+});
+
+const guias = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    location: z.string(),
+    panorama: z.string(),
+    difficulty: z.enum(['Baja', 'Media', 'Alta']),
+  }),
+});
+
+export const collections = {
+  informativas,
+  propiedades,
+  guias,
+};
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\layouts\Layout.astro
+==============================================================================
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Descubre la 'Perla del Norte de Santander' de forma inmersiva" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title} | Portal Turístico Durania</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+        
+        <!-- Pannellum CSS & JS CDN -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+        <script is:inline src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+	</head>
+	<body class="bg-black h-screen w-screen overflow-hidden m-0 p-0 font-sans antialiased text-white selection:bg-[#10b981] selection:text-white">
+        <slot />
+	</body>
+</html>
+
+<style is:global>
+	html, body {
+		font-family: 'Inter', system-ui, sans-serif;
+	}
+</style>
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\pages\0index.astro
+==============================================================================
+---
+// src/pages/index.astro
+import Layout from '../layouts/Layout.astro';
+import Visor360 from '../components/Visor360.astro';
+import { getCollection } from 'astro:content';
+
+const propiedades = await getCollection('propiedades');
+const guias = await getCollection('guias');
+const informativas = await getCollection('informativas');
+---
+
+<Layout title="Inmersión 360">
+    <!-- Contenedor inmersivo a pantalla completa. Layout se encarga de h-screen w-screen bg-black -->
+    <main class="w-full h-full">
+        <Visor360 propiedades={propiedades} guias={guias} informativas={informativas} />
+    </main>
+</Layout>
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\pages\index.astro
+==============================================================================
+---
+// src/pages/index.astro
+import Layout from '../layouts/Layout.astro';
+import App from '../components/react/App.jsx';
+import '../styles/global.css';
+
+const title = "Durania - La Tacita de Plata";
+---
+
+<Layout title={title}>
+    <App client:only="react" />
+</Layout>
+
+<style is:global>
+    :root {
+        --bg-main: #0a0a0a;
+    }
+    
+    html, body {
+        background-color: var(--bg-main);
+        min-height: 100vh;
+        width: 100%;
+        overflow-y: auto;
+    }
+</style>
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\pages\tour.astro
+==============================================================================
+---
+// src/pages/tour.astro
+import Layout from '../layouts/Layout.astro';
+import Visor360 from '../components/Visor360.astro';
+import { getCollection } from 'astro:content';
+
+/**
+ * PAGE: Tour Virtual 360
+ * Esta es la página principal del visor. Su responsabilidad es:
+ * 1. Recuperar los datos de las colecciones de contenido (Astro Content Collections).
+ * 2. Envolver el visor en el Layout global (que carga Pannellum).
+ * 3. Pasar los datos al componente especializado Visor360.
+ */
+
+// Recuperamos todas las colecciones necesarias
+const propiedades = await getCollection('propiedades');
+const guias = await getCollection('guias');
+const informativas = await getCollection('informativas');
+
+// Título dinámico para SEO
+const title = "Tour Virtual 360 - Durania";
+---
+
+<Layout title={title}>
+    <main class="w-full h-full overflow-hidden">
+        <Visor360 
+            propiedades={propiedades} 
+            guias={guias} 
+            informativas={informativas} 
+        />
+    </main>
+</Layout>
+
+<style>
+    /* Aseguramos que el main ocupe toda la pantalla para el visor */
+    main {
+        height: 100vh;
+        width: 100vw;
+    }
+</style>
+
+
+
+
+==============================================================================
+ARCHIVO: .\src\styles\global.css
+==============================================================================
+/**
+ * =============================================================================
+ * index.css — Hoja de estilos global del sitio Turismo Durania
+ * =============================================================================
+ *
+ * Este archivo centraliza todos los estilos reutilizables del proyecto.
+ * Está organizado en las siguientes secciones:
+ *
+ *  1. @import de fuentes de Google Fonts
+ *  2. Directivas de Tailwind CSS (base, components, utilities)
+ *  3. Capa @layer base — estilos HTML raíz
+ *  4. Animaciones @keyframes personalizadas
+ *  5. Clases de animación con utilidades de delay
+ *  6. Glassmorphism (.glass, .glass-dark)
+ *  7. Texto con gradiente y efecto shimmer
+ *  8. Interacción de tarjetas (.card-hover)
+ *  9. Divisor de olas (.wave-divider)
+ * 10. Superposición de ruido (.noise)
+ * 11. Efectos de resplandor (.glow-*)
+ * 12. Componente pill/badge
+ * 13. Layouts de sección (.section-dark, .section-light)
+ * =============================================================================
+ */
+
+/* ── 1. Fuentes de Google Fonts ──────────────────────────────────────────────
+   Inter       → Usada en textos de cuerpo, párrafos y elementos UI.
+   Playfair Display → Fuente serif elegante para títulos principales (h1, h2).
+   El @import DEBE ir antes de cualquier directiva @tailwind para evitar warnings.
+   ─────────────────────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap');
+
+/* ── 2. Tailwind CSS core ────────────────────────────────────────────────────
+   @tailwind base      → Reset + estilos base (Preflight)
+   @tailwind components → Permite definir clases de componente reutilizables
+   @tailwind utilities  → Genera todas las clases utilitarias de Tailwind
+   ─────────────────────────────────────────────────────────────────────────── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── 3. Capa base — estilos raíz ─────────────────────────────────────────────
+   - scroll-behavior: smooth → El scroll al hacer click en enlaces de anclaje
+     (#sección) es suave en lugar de instantáneo.
+   - bg-[#0a0a0a] → Fondo casi negro que da la estética oscura premium al sitio.
+   - overflow-x-hidden → Evita scroll horizontal accidental por elementos
+     que se animan fuera del viewport.
+   ─────────────────────────────────────────────────────────────────────────── */
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply font-sans bg-[#0a0a0a] text-white overflow-x-hidden;
+    }
+}
+
+/* ── 4. Animaciones @keyframes ───────────────────────────────────────────────
+   Todas las animaciones se definen aquí y se consumen mediante las clases
+   de utilidad definidas abajo (.animate-*).
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * fadeUp — Aparece desde abajo hacia arriba con fade.
+ * Uso: títulos y bloques de contenido al cargarse la página (Hero).
+ */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/**
+ * fadeIn — Aparición simple con opacidad.
+ * Uso: badges, pills, elementos secundarios.
+ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/**
+ * slideRight — Desliza desde la izquierda hacia la posición original.
+ * Uso: elementos de listas que entran desde el lateral.
+ */
+@keyframes slideRight {
+    from {
+        opacity: 0;
+        transform: translateX(-60px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/**
+ * scaleIn — Aparece creciendo desde una escala menor.
+ * Uso: tarjetas o iconos que "emergen" al cargar.
+ */
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/**
+ * float — Levitación suave infinita (arriba/abajo).
+ * Uso: orbes decorativos del Hero y tarjeta flotante del Apiturismo.
+ * Amplitud: 12px. Duración: 4s.
+ */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+/**
+ * shimmer — Desplazamiento horizontal de un gradiente de texto.
+ * Uso: clase .shimmer-text para texto con destello animado.
+ */
+@keyframes shimmer {
+    0% {
+        background-position: -200% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+/**
+ * pulse-ring — Aro que se expande y desvanece (estilo "ping").
+ * Uso disponible para indicadores de estado activo o notificaciones.
+ */
+@keyframes pulse-ring {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1.6);
+        opacity: 0;
+    }
+}
+
+/**
+ * grain — Desplazamientos aleatorios de pequeña magnitud.
+ * Simula textura de grano fotográfico cuando se aplica sobre un overlay.
+ */
+@keyframes grain {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    10% {
+        transform: translate(-2%, -3%);
+    }
+
+    20% {
+        transform: translate(2%, 2%);
+    }
+
+    30% {
+        transform: translate(-1%, 4%);
+    }
+
+    40% {
+        transform: translate(3%, -2%);
+    }
+
+    50% {
+        transform: translate(-2%, 1%);
+    }
+
+    60% {
+        transform: translate(2%, -4%);
+    }
+
+    70% {
+        transform: translate(-3%, 2%);
+    }
+
+    80% {
+        transform: translate(1%, 3%);
+    }
+
+    90% {
+        transform: translate(-1%, -1%);
+    }
+}
+
+/**
+ * marquee — Desplazamiento continuo de izquierda a derecha.
+ * Uso: banda de categorías turísticas en el componente Stats.
+ * IMPORTANTE: el contenido se duplica en el HTML para que el loop
+ * sea seamless (sin salto visible al reiniciar).
+ * Duración: 30s para velocidad de lectura cómoda.
+ */
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* ── 5. Clases de animación y delays ─────────────────────────────────────────
+   Cada clase aplica la animación correspondiente con sus parámetros.
+   Las clases .delay-* permiten escalonar animaciones en secuencia
+   (ej: título → subtítulo → botón aparecen uno tras otro).
+   ─────────────────────────────────────────────────────────────────────────── */
+.animate-fade-up {
+    animation: fadeUp 0.8s ease both;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease both;
+}
+
+.animate-slide-right {
+    animation: slideRight 0.8s ease both;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.6s ease both;
+}
+
+.animate-float {
+    animation: float 4s ease-in-out infinite;
+}
+
+.animate-shimmer {
+    animation: shimmer 3s linear infinite;
+}
+
+.animate-marquee {
+    animation: marquee 30s linear infinite;
+}
+
+/* Delays escalonados — se combinan con cualquier .animate-* */
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+.delay-400 {
+    animation-delay: 0.4s;
+}
+
+.delay-500 {
+    animation-delay: 0.5s;
+}
+
+.delay-600 {
+    animation-delay: 0.6s;
+}
+
+/* ── 6. Glassmorphism ────────────────────────────────────────────────────────
+   Técnica de diseño que simula vidrio esmerilado usando blur sobre el fondo.
+   Requiere que el elemento NO tenga un fondo opaco detrás suyo.
+
+   .glass      → Para paneles sobre fondos oscuros con imágenes (Hero, modales).
+   .glass-dark → Versión más opaca para barras de estadísticas y overlays.
+
+   backdrop-filter/webkit-backdrop-filter → Difumina lo que hay DETRÁS del elemento.
+   ─────────────────────────────────────────────────────────────────────────── */
+.glass {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    /* Compatibilidad Safari/iOS */
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-dark {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── 7. Texto con gradiente ──────────────────────────────────────────────────
+   Hace que el texto muestre un gradiente de color en lugar de un color sólido.
+   Requiere: background-clip: text + color del texto transparente.
+
+   .gradient-text      → Verde → Cian → Violeta (usado en elementos destacados)
+   .gradient-text-gold → Ámbar dorado (subtítulo Hero "La Tacita de Plata")
+   .shimmer-text       → Blanco con destello verde que se desplaza en loop
+   ─────────────────────────────────────────────────────────────────────────── */
+.gradient-text {
+    background: linear-gradient(135deg, #4ade80 0%, #22d3ee 50%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gradient-text-gold {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.shimmer-text {
+    background: linear-gradient(90deg, #fff 25%, #4ade80 50%, #fff 75%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
+}
+
+/* ── 8. Interacción de tarjetas ──────────────────────────────────────────────
+   .card-hover → Se aplica a cualquier tarjeta que deba levantarse al hover.
+   - translateY(-8px) → Sube 8px para dar sensación de elevación.
+   - scale(1.02)      → Crece ligeramente para enfatizar el foco.
+   - box-shadow       → Sombra profunda que refuerza la elevación visual.
+   - cubic-bezier     → Curva de aceleración más natural que "ease" estándar.
+   ─────────────────────────────────────────────────────────────────────────── */
+.card-hover {
+    transition: transform 0.4s cubic-bezier(.25, .8, .25, 1), box-shadow 0.4s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+}
+
+/* ── 9. Divisor de olas ──────────────────────────────────────────────────────
+   Crea una transición orgánica entre secciones usando clip-path.
+   El pseudo-elemento ::after dibuja una elipse recortada en la parte inferior.
+   Actualmente disponible pero no aplicado en producción (reservado para uso futuro).
+   ─────────────────────────────────────────────────────────────────────────── */
+.wave-divider {
+    position: relative;
+    overflow: hidden;
+}
+
+.wave-divider::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: inherit;
+    clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+/* ── 10. Superposición de ruido ──────────────────────────────────────────────
+   Agrega una textura sutil de "grano fotográfico" al elemento.
+   Usa un SVG inline con feTurbulence para generar el patrón.
+   opacity: 0.03 → Muy sutil, solo agrega profundidad sin distraer.
+   pointer-events: none → No interfiere con clics ni interacciones.
+   ─────────────────────────────────────────────────────────────────────────── */
+.noise::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ── 11. Efectos de resplandor (Glow) ────────────────────────────────────────
+   Sombras de caja coloreadas que simulan un halo de luz alrededor del elemento.
+   Se usan en botones primarios y tarjetas destacadas para enfocar la atención.
+
+   .glow-green  → Botón principal "Explorar" y botones de acción verde
+   .glow-amber  → Botón de Apiturismo "Reservar tour"
+   .glow-purple → Disponible para elementos culturales/tradiciones
+   ─────────────────────────────────────────────────────────────────────────── */
+.glow-green {
+    box-shadow: 0 0 40px rgba(74, 222, 128, 0.3);
+}
+
+.glow-amber {
+    box-shadow: 0 0 40px rgba(251, 191, 36, 0.3);
+}
+
+.glow-purple {
+    box-shadow: 0 0 40px rgba(167, 139, 250, 0.3);
+}
+
+/* ── 12. Pill / Badge ────────────────────────────────────────────────────────
+   Etiqueta de categoría pequeña usada en el encabezado de cada sección.
+   Ejemplo: "🌿 Ecoturismo", "🍽️ Sabores Locales", "🐝 Apiturismo".
+   Se combina con colores de fondo y borde específicos de cada sección.
+   ─────────────────────────────────────────────────────────────────────────── */
+.pill {
+    @apply inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest;
+}
+
+/* ── 13. Layouts de sección ──────────────────────────────────────────────────
+   Dos variantes de fondo que alternan entre secciones para crear ritmo visual
+   y evitar que la página se vea monótona.
+
+   .section-dark  → bg #0d0d0d (casi negro puro) — secciones impares
+   .section-light → bg #111111 (negro ligeramente más claro) — secciones pares
+
+   py-24 → Espaciado vertical generoso (96px arriba y abajo) para respiración.
+   px-4  → Padding horizontal mínimo que se complementa con max-w-7xl mx-auto
+           en el contenedor interior.
+   ─────────────────────────────────────────────────────────────────────────── */
+.section-dark {
+    @apply bg-[#0d0d0d] py-24 px-4;
+}
+
+.section-light {
+    @apply bg-[#111111] py-24 px-4;
+}
+
+
+

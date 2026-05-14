@@ -2,6 +2,12 @@
 // src/components/Visor360.astro
 import type { CollectionEntry } from 'astro:content';
 
+/**
+ * COMPONENT: Visor360.astro
+ * Este componente maneja la UI del tour y la lógica de inicialización de Pannellum.
+ * Recibe los datos ya procesados desde la página (props).
+ */
+
 export interface Props {
   propiedades?: CollectionEntry<'propiedades'>[];
   guias?: CollectionEntry<'guias'>[];
@@ -10,14 +16,14 @@ export interface Props {
 
 const { propiedades = [], guias = [], informativas = [] } = Astro.props;
 
-// Construimos el JSON de escenas en el servidor para inyectarlo en el cliente
+// Construimos el JSON de escenas en el servidor para inyectarlo en el cliente de forma segura
 const scenesJSON: Record<string, any> = {};
 
 propiedades.forEach((prop) => {
     scenesJSON[prop.slug] = {
         title: prop.data.title,
         type: "equirectangular",
-        panorama: prop.data.panorama,
+        panorama: prop.data.panorama, // Debe ser ruta absoluta a /public
         hotSpots: [
             {
                 pitch: 0,
@@ -52,7 +58,7 @@ guias.forEach((guia) => {
 });
 
 informativas.forEach((info) => {
-    // Si no tiene panorama (heroImage), usamos uno por defecto de la región
+    // Fallback de imagen si no hay heroImage
     const panoramaImg = info.data.heroImage || "/images/lago_360.jpg"; 
     
     scenesJSON[info.slug] = {
@@ -73,7 +79,7 @@ informativas.forEach((info) => {
     };
 });
 
-// Definir primera escena buscando en el orden de prioridad, o un fallback
+// Determinamos la escena inicial
 const firstScene = propiedades.length > 0 ? propiedades[0].slug : 
                    (guias.length > 0 ? guias[0].slug : 
                    (informativas.length > 0 ? informativas[0].slug : "default"));
@@ -84,7 +90,7 @@ const firstScene = propiedades.length > 0 ? propiedades[0].slug :
     <div id="panorama" class="w-full h-full"></div>
 </div>
 
-<!-- Floating UI Overlay (Glassmorphism & Tailwind) -->
+<!-- Floating UI Overlay -->
 <div class="fixed inset-0 z-10 pointer-events-none flex flex-col justify-between p-6">
     <!-- Top Section: Logo & Sidebar -->
     <div class="flex justify-between items-start pointer-events-auto">
@@ -101,7 +107,7 @@ const firstScene = propiedades.length > 0 ? propiedades[0].slug :
             </div>
         </div>
 
-        <!-- Menú Lateral Retráctil (Destinos) -->
+        <!-- Menú Lateral Retráctil -->
         <div class="relative group">
             <button class="bg-[#064e3b]/80 hover:bg-[#10b981] backdrop-blur-md transition-all duration-300 px-6 py-3.5 rounded-xl border border-emerald-500/30 text-white font-semibold shadow-2xl flex items-center gap-3">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -110,7 +116,7 @@ const firstScene = propiedades.length > 0 ? propiedades[0].slug :
             <div class="absolute right-0 mt-3 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 origin-top-right">
                 <div class="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[70vh] overflow-y-auto custom-scrollbar">
                     
-                    {/* Sección: Inversión Inmobiliaria */}
+                    {/* Inversión Inmobiliaria */}
                     {propiedades.length > 0 && (
                         <div class="px-5 py-2 bg-emerald-900/50 border-b border-emerald-500/30">
                             <span class="text-[10px] font-black uppercase tracking-widest text-emerald-300">Inversión Inmobiliaria</span>
@@ -126,7 +132,7 @@ const firstScene = propiedades.length > 0 ? propiedades[0].slug :
                         </button>
                     ))}
 
-                    {/* Sección: Rutas Turísticas */}
+                    {/* Rutas Turísticas */}
                     {guias.length > 0 && (
                         <div class="px-5 py-2 bg-emerald-900/50 border-b border-emerald-500/30 border-t border-t-white/10">
                             <span class="text-[10px] font-black uppercase tracking-widest text-emerald-300">Rutas Turísticas</span>
@@ -142,7 +148,7 @@ const firstScene = propiedades.length > 0 ? propiedades[0].slug :
                         </button>
                     ))}
 
-                    {/* Sección: Historia y Cultura */}
+                    {/* Historia y Cultura */}
                     {informativas.length > 0 && (
                         <div class="px-5 py-2 bg-emerald-900/50 border-b border-emerald-500/30 border-t border-t-white/10">
                             <span class="text-[10px] font-black uppercase tracking-widest text-emerald-300">Historia y Cultura</span>
@@ -156,18 +162,12 @@ const firstScene = propiedades.length > 0 ? propiedades[0].slug :
                             <svg class="w-5 h-5 text-emerald-400 group-hover/item:text-white transition-colors group-hover/item:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </button>
                     ))}
-
-                    {propiedades.length === 0 && guias.length === 0 && informativas.length === 0 && (
-                        <div class="px-5 py-4 text-white/50 text-sm italic">
-                            No hay destinos disponibles.
-                        </div>
-                    )}
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Controles de Zoom Personalizados (Bottom) -->
+    <!-- Zoom Controls -->
     <div class="pointer-events-auto flex justify-center gap-6 pb-4">
         <button id="btn-zoomout" class="w-14 h-14 rounded-full bg-[#064e3b]/80 hover:bg-[#10b981] backdrop-blur-md border border-white/20 text-white flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.3)] transition-all hover:scale-110 active:scale-95 group">
             <svg class="w-7 h-7 group-hover:stroke-[3px] transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
@@ -179,12 +179,12 @@ const firstScene = propiedades.length > 0 ? propiedades[0].slug :
 </div>
 
 <script is:inline define:vars={{ dynamicScenes: scenesJSON, firstScene }}>
-    // Función global requerida por Pannellum para inyectar el HTML de nuestros hotspots
+    /**
+     * Lógica de Cliente Pannellum
+     * Usamos is:inline para asegurar que se ejecute en el contexto global del navegador.
+     */
+    
     window.hotspotTooltip = function(hotSpotDiv, args) {
-        // No añadimos clases aquí al contenedor principal porque Pannellum las sobreescribe, 
-        // usamos cssClass en el JSON de configuración para eso.
-        
-        // Creamos la tarjeta interactiva
         const card = document.createElement('div');
         card.className = 'custom-pro-card';
         card.innerHTML = `
@@ -198,30 +198,27 @@ const firstScene = propiedades.length > 0 ? propiedades[0].slug :
                 <p>${args.content}</p>
             </div>
         `;
-        
         hotSpotDiv.appendChild(card);
     };
 
-    // Reconstruir las escenas para inyectar la función directamente
+    // Inyectamos la función de tooltip en cada escena
     Object.keys(dynamicScenes).forEach(key => {
         const scene = dynamicScenes[key];
         if (scene.hotSpots) {
             scene.hotSpots.forEach(hs => {
                 hs.createTooltipFunc = window.hotspotTooltip;
                 hs.createTooltipArgs = hs._tooltipArgs;
-                delete hs._tooltipArgs; // Limpieza
             });
         }
     });
 
-    // Configuración avanzada de Pannellum en modo Tour
     const tourConfig = {
       default: {
         firstScene: firstScene,
-        author: "Portal Turístico Durania",
+        author: "Durania 360",
         sceneFadeDuration: 1200,
         autoLoad: true,
-        showControls: false, // Ocultamos controles nativos para usar los nuestros (UI Overlay)
+        showControls: false,
         compass: false
       },
       scenes: dynamicScenes
@@ -231,18 +228,17 @@ const firstScene = propiedades.length > 0 ? propiedades[0].slug :
     
     function initPannellum() {
         const container = document.getElementById('panorama');
-        if (!container || !window.pannellum) return;
-
-        // Destruir instancia anterior si existe (importante para navegación Astro SPA)
-        if (viewer) {
-            viewer.destroy();
+        if (!container || !window.pannellum) {
+            console.warn("Pannellum o el contenedor no están listos. Reintentando...");
+            return;
         }
 
+        if (viewer) viewer.destroy();
+
         try {
-            // Inicialización directa pasando el objeto en lugar de parsearlo
             viewer = window.pannellum.viewer('panorama', tourConfig);
             
-            // Configurar botones de UI Personalizados
+            // Event Listeners para la UI
             document.getElementById('btn-zoomin')?.addEventListener('click', () => {
                 if (viewer) viewer.setHfov(viewer.getHfov() - 10);
             });
@@ -250,32 +246,24 @@ const firstScene = propiedades.length > 0 ? propiedades[0].slug :
                 if (viewer) viewer.setHfov(viewer.getHfov() + 10);
             });
 
-            // Configurar navegación de escenas del menú lateral
             document.querySelectorAll('.scene-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const sceneId = e.currentTarget.dataset.scene;
-                    if(sceneId && viewer) {
-                        viewer.loadScene(sceneId);
-                    }
+                    if(sceneId && viewer) viewer.loadScene(sceneId);
                 });
             });
-
         } catch (e) {
-            console.error("Error al inicializar el tour virtual 360:", e);
+            console.error("Error al inicializar Pannellum:", e);
         }
     }
 
-    // Escuchar eventos de carga de página en Astro
+    // Soporte para Astro View Transitions y Carga Inicial
     document.addEventListener('astro:page-load', initPannellum);
     document.addEventListener('DOMContentLoaded', initPannellum);
 </script>
 
 <style is:global>
-    /* -------------------------------------------------------------
-       ESTILOS PRO PARA HOTSPOTS (Glassmorphism & Animaciones)
-    ------------------------------------------------------------- */
-    
-    /* El punto interactivo en el visor */
+    /* Estilos globales para hotspots y cards (Pannellum los inyecta dinámicamente) */
     .custom-hotspot-wrapper {
         width: 32px;
         height: 32px;
@@ -285,11 +273,9 @@ const firstScene = propiedades.length > 0 ? propiedades[0].slug :
         box-shadow: 0 0 20px rgba(16, 185, 129, 0.8);
         cursor: pointer;
         z-index: 10;
-        /* Reemplazamos la transición de transformación por una de color/sombra */
         transition: background-color 0.2s ease, box-shadow 0.2s ease;
     }
     
-    /* Efecto de ondas (Pulse) constante */
     .custom-hotspot-wrapper::after {
         content: '';
         position: absolute;
@@ -302,13 +288,10 @@ const firstScene = propiedades.length > 0 ? propiedades[0].slug :
     }
 
     .custom-hotspot-wrapper:hover {
-        /* En lugar de usar 'transform: scale', intensificamos el brillo */
         background-color: #34d399; 
         box-shadow: 0 0 30px rgba(52, 211, 153, 1);
-        z-index: 50; 
     }
 
-    /* La tarjeta de información que se despliega al pasar el mouse */
     .custom-pro-card {
         position: absolute;
         bottom: 50px;
@@ -316,9 +299,8 @@ const firstScene = propiedades.length > 0 ? propiedades[0].slug :
         transform: translateX(-50%) translateY(15px);
         width: max-content;
         max-width: 300px;
-        background: rgba(6, 78, 59, 0.85); /* #064e3b con opacidad */
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
+        background: rgba(6, 78, 59, 0.9);
+        backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.15);
         border-radius: 20px;
         padding: 20px;
@@ -326,99 +308,46 @@ const firstScene = propiedades.length > 0 ? propiedades[0].slug :
         opacity: 0;
         visibility: hidden;
         transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.2);
-        pointer-events: none; /* Evitar que la tarjeta bloquee clics del mouse en el visor */
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+        pointer-events: none;
     }
 
-    /* Mostrar tarjeta al hacer hover en el hotspot */
     .custom-hotspot-wrapper:hover .custom-pro-card {
         opacity: 1;
         visibility: visible;
         transform: translateX(-50%) translateY(0);
     }
 
-    /* Triángulo apuntador de la tarjeta */
-    .custom-pro-card::after {
-        content: '';
-        position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%) rotate(45deg);
-        width: 16px;
-        height: 16px;
-        background: rgba(6, 78, 59, 0.85);
-        border-right: 1px solid rgba(255, 255, 255, 0.15);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(16px);
-    }
-
-    /* Diseño interno de la tarjeta */
     .card-header {
         display: flex;
         align-items: center;
         gap: 12px;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding-bottom: 12px;
-    }
-
-    .card-icon {
-        width: 28px;
-        height: 28px;
-        color: #34d399; /* emerald-400 */
-        background: rgba(16, 185, 129, 0.2);
-        padding: 4px;
-        border-radius: 8px;
+        padding-bottom: 8px;
     }
 
     .card-title {
-        font-family: 'Inter', sans-serif;
         font-weight: 800;
         font-size: 16px;
         margin: 0;
-        color: white;
-        letter-spacing: 0.5px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     .card-body p {
-        font-family: 'Inter', sans-serif;
         font-size: 14px;
-        font-weight: 500;
-        line-height: 1.6;
         margin: 0;
-        color: #d1fae5; /* emerald-100 */
+        color: #d1fae5;
     }
 
-    /* Animación del efecto Pulse */
     @keyframes hotspotPulse {
         0% { transform: scale(1); opacity: 0.8; }
         100% { transform: scale(2); opacity: 0; }
     }
+
+    .pnlm-container { cursor: default !important; }
+    .pnlm-grab { cursor: grab !important; }
+    .pnlm-grabbing { cursor: grabbing !important; }
     
-    /* Ocultar el cursor por defecto de Pannellum (la cruceta) y usar el normal */
-    .pnlm-container {
-        cursor: default !important;
-    }
-    .pnlm-grab {
-        cursor: grab !important;
-    }
-    .pnlm-grabbing {
-        cursor: grabbing !important;
-    }
-    
-    /* Custom Scrollbar for Sidebar */
-    .custom-scrollbar::-webkit-scrollbar {
-        width: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.2);
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: rgba(16, 185, 129, 0.5);
-        border-radius: 10px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: rgba(16, 185, 129, 0.8);
-    }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
 </style>

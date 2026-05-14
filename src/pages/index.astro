@@ -1,17 +1,25 @@
 ---
 // src/pages/index.astro
 import Layout from '../layouts/Layout.astro';
-import Visor360 from '../components/Visor360.astro';
-import { getCollection } from 'astro:content';
+import App from '../components/react/App.jsx';
+import '../styles/global.css';
 
-const propiedades = await getCollection('propiedades');
-const guias = await getCollection('guias');
-const informativas = await getCollection('informativas');
+const title = "Durania - La Tacita de Plata";
 ---
 
-<Layout title="Inmersión 360">
-    <!-- Contenedor inmersivo a pantalla completa. Layout se encarga de h-screen w-screen bg-black -->
-    <main class="w-full h-full">
-        <Visor360 propiedades={propiedades} guias={guias} informativas={informativas} />
-    </main>
+<Layout title={title}>
+    <App client:only="react" />
 </Layout>
+
+<style is:global>
+    :root {
+        --bg-main: #0a0a0a;
+    }
+    
+    html, body {
+        background-color: var(--bg-main);
+        min-height: 100vh;
+        width: 100%;
+        overflow-y: auto;
+    }
+</style>

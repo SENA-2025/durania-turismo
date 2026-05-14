@@ -1,0 +1,40 @@
+---
+// src/pages/tour.astro
+import Layout from '../layouts/Layout.astro';
+import Visor360 from '../components/Visor360.astro';
+import { getCollection } from 'astro:content';
+
+/**
+ * PAGE: Tour Virtual 360
+ * Esta es la página principal del visor. Su responsabilidad es:
+ * 1. Recuperar los datos de las colecciones de contenido (Astro Content Collections).
+ * 2. Envolver el visor en el Layout global (que carga Pannellum).
+ * 3. Pasar los datos al componente especializado Visor360.
+ */
+
+// Recuperamos todas las colecciones necesarias
+const propiedades = await getCollection('propiedades');
+const guias = await getCollection('guias');
+const informativas = await getCollection('informativas');
+
+// Título dinámico para SEO
+const title = "Tour Virtual 360 - Durania";
+---
+
+<Layout title={title}>
+    <main class="w-full h-full overflow-hidden">
+        <Visor360 
+            propiedades={propiedades} 
+            guias={guias} 
+            informativas={informativas} 
+        />
+    </main>
+</Layout>
+
+<style>
+    /* Aseguramos que el main ocupe toda la pantalla para el visor */
+    main {
+        height: 100vh;
+        width: 100vw;
+    }
+</style>

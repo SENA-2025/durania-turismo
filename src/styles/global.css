@@ -1,0 +1,448 @@
+/**
+ * =============================================================================
+ * index.css — Hoja de estilos global del sitio Turismo Durania
+ * =============================================================================
+ *
+ * Este archivo centraliza todos los estilos reutilizables del proyecto.
+ * Está organizado en las siguientes secciones:
+ *
+ *  1. @import de fuentes de Google Fonts
+ *  2. Directivas de Tailwind CSS (base, components, utilities)
+ *  3. Capa @layer base — estilos HTML raíz
+ *  4. Animaciones @keyframes personalizadas
+ *  5. Clases de animación con utilidades de delay
+ *  6. Glassmorphism (.glass, .glass-dark)
+ *  7. Texto con gradiente y efecto shimmer
+ *  8. Interacción de tarjetas (.card-hover)
+ *  9. Divisor de olas (.wave-divider)
+ * 10. Superposición de ruido (.noise)
+ * 11. Efectos de resplandor (.glow-*)
+ * 12. Componente pill/badge
+ * 13. Layouts de sección (.section-dark, .section-light)
+ * =============================================================================
+ */
+
+/* ── 1. Fuentes de Google Fonts ──────────────────────────────────────────────
+   Inter       → Usada en textos de cuerpo, párrafos y elementos UI.
+   Playfair Display → Fuente serif elegante para títulos principales (h1, h2).
+   El @import DEBE ir antes de cualquier directiva @tailwind para evitar warnings.
+   ─────────────────────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap');
+
+/* ── 2. Tailwind CSS core ────────────────────────────────────────────────────
+   @tailwind base      → Reset + estilos base (Preflight)
+   @tailwind components → Permite definir clases de componente reutilizables
+   @tailwind utilities  → Genera todas las clases utilitarias de Tailwind
+   ─────────────────────────────────────────────────────────────────────────── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── 3. Capa base — estilos raíz ─────────────────────────────────────────────
+   - scroll-behavior: smooth → El scroll al hacer click en enlaces de anclaje
+     (#sección) es suave en lugar de instantáneo.
+   - bg-[#0a0a0a] → Fondo casi negro que da la estética oscura premium al sitio.
+   - overflow-x-hidden → Evita scroll horizontal accidental por elementos
+     que se animan fuera del viewport.
+   ─────────────────────────────────────────────────────────────────────────── */
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply font-sans bg-[#0a0a0a] text-white overflow-x-hidden;
+    }
+}
+
+/* ── 4. Animaciones @keyframes ───────────────────────────────────────────────
+   Todas las animaciones se definen aquí y se consumen mediante las clases
+   de utilidad definidas abajo (.animate-*).
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * fadeUp — Aparece desde abajo hacia arriba con fade.
+ * Uso: títulos y bloques de contenido al cargarse la página (Hero).
+ */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/**
+ * fadeIn — Aparición simple con opacidad.
+ * Uso: badges, pills, elementos secundarios.
+ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/**
+ * slideRight — Desliza desde la izquierda hacia la posición original.
+ * Uso: elementos de listas que entran desde el lateral.
+ */
+@keyframes slideRight {
+    from {
+        opacity: 0;
+        transform: translateX(-60px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/**
+ * scaleIn — Aparece creciendo desde una escala menor.
+ * Uso: tarjetas o iconos que "emergen" al cargar.
+ */
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/**
+ * float — Levitación suave infinita (arriba/abajo).
+ * Uso: orbes decorativos del Hero y tarjeta flotante del Apiturismo.
+ * Amplitud: 12px. Duración: 4s.
+ */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+/**
+ * shimmer — Desplazamiento horizontal de un gradiente de texto.
+ * Uso: clase .shimmer-text para texto con destello animado.
+ */
+@keyframes shimmer {
+    0% {
+        background-position: -200% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+/**
+ * pulse-ring — Aro que se expande y desvanece (estilo "ping").
+ * Uso disponible para indicadores de estado activo o notificaciones.
+ */
+@keyframes pulse-ring {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1.6);
+        opacity: 0;
+    }
+}
+
+/**
+ * grain — Desplazamientos aleatorios de pequeña magnitud.
+ * Simula textura de grano fotográfico cuando se aplica sobre un overlay.
+ */
+@keyframes grain {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    10% {
+        transform: translate(-2%, -3%);
+    }
+
+    20% {
+        transform: translate(2%, 2%);
+    }
+
+    30% {
+        transform: translate(-1%, 4%);
+    }
+
+    40% {
+        transform: translate(3%, -2%);
+    }
+
+    50% {
+        transform: translate(-2%, 1%);
+    }
+
+    60% {
+        transform: translate(2%, -4%);
+    }
+
+    70% {
+        transform: translate(-3%, 2%);
+    }
+
+    80% {
+        transform: translate(1%, 3%);
+    }
+
+    90% {
+        transform: translate(-1%, -1%);
+    }
+}
+
+/**
+ * marquee — Desplazamiento continuo de izquierda a derecha.
+ * Uso: banda de categorías turísticas en el componente Stats.
+ * IMPORTANTE: el contenido se duplica en el HTML para que el loop
+ * sea seamless (sin salto visible al reiniciar).
+ * Duración: 30s para velocidad de lectura cómoda.
+ */
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* ── 5. Clases de animación y delays ─────────────────────────────────────────
+   Cada clase aplica la animación correspondiente con sus parámetros.
+   Las clases .delay-* permiten escalonar animaciones en secuencia
+   (ej: título → subtítulo → botón aparecen uno tras otro).
+   ─────────────────────────────────────────────────────────────────────────── */
+.animate-fade-up {
+    animation: fadeUp 0.8s ease both;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease both;
+}
+
+.animate-slide-right {
+    animation: slideRight 0.8s ease both;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.6s ease both;
+}
+
+.animate-float {
+    animation: float 4s ease-in-out infinite;
+}
+
+.animate-shimmer {
+    animation: shimmer 3s linear infinite;
+}
+
+.animate-marquee {
+    animation: marquee 30s linear infinite;
+}
+
+/* Delays escalonados — se combinan con cualquier .animate-* */
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+.delay-400 {
+    animation-delay: 0.4s;
+}
+
+.delay-500 {
+    animation-delay: 0.5s;
+}
+
+.delay-600 {
+    animation-delay: 0.6s;
+}
+
+/* ── 6. Glassmorphism ────────────────────────────────────────────────────────
+   Técnica de diseño que simula vidrio esmerilado usando blur sobre el fondo.
+   Requiere que el elemento NO tenga un fondo opaco detrás suyo.
+
+   .glass      → Para paneles sobre fondos oscuros con imágenes (Hero, modales).
+   .glass-dark → Versión más opaca para barras de estadísticas y overlays.
+
+   backdrop-filter/webkit-backdrop-filter → Difumina lo que hay DETRÁS del elemento.
+   ─────────────────────────────────────────────────────────────────────────── */
+.glass {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    /* Compatibilidad Safari/iOS */
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-dark {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── 7. Texto con gradiente ──────────────────────────────────────────────────
+   Hace que el texto muestre un gradiente de color en lugar de un color sólido.
+   Requiere: background-clip: text + color del texto transparente.
+
+   .gradient-text      → Verde → Cian → Violeta (usado en elementos destacados)
+   .gradient-text-gold → Ámbar dorado (subtítulo Hero "La Tacita de Plata")
+   .shimmer-text       → Blanco con destello verde que se desplaza en loop
+   ─────────────────────────────────────────────────────────────────────────── */
+.gradient-text {
+    background: linear-gradient(135deg, #4ade80 0%, #22d3ee 50%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gradient-text-gold {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.shimmer-text {
+    background: linear-gradient(90deg, #fff 25%, #4ade80 50%, #fff 75%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
+}
+
+/* ── 8. Interacción de tarjetas ──────────────────────────────────────────────
+   .card-hover → Se aplica a cualquier tarjeta que deba levantarse al hover.
+   - translateY(-8px) → Sube 8px para dar sensación de elevación.
+   - scale(1.02)      → Crece ligeramente para enfatizar el foco.
+   - box-shadow       → Sombra profunda que refuerza la elevación visual.
+   - cubic-bezier     → Curva de aceleración más natural que "ease" estándar.
+   ─────────────────────────────────────────────────────────────────────────── */
+.card-hover {
+    transition: transform 0.4s cubic-bezier(.25, .8, .25, 1), box-shadow 0.4s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+}
+
+/* ── 9. Divisor de olas ──────────────────────────────────────────────────────
+   Crea una transición orgánica entre secciones usando clip-path.
+   El pseudo-elemento ::after dibuja una elipse recortada en la parte inferior.
+   Actualmente disponible pero no aplicado en producción (reservado para uso futuro).
+   ─────────────────────────────────────────────────────────────────────────── */
+.wave-divider {
+    position: relative;
+    overflow: hidden;
+}
+
+.wave-divider::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: inherit;
+    clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+/* ── 10. Superposición de ruido ──────────────────────────────────────────────
+   Agrega una textura sutil de "grano fotográfico" al elemento.
+   Usa un SVG inline con feTurbulence para generar el patrón.
+   opacity: 0.03 → Muy sutil, solo agrega profundidad sin distraer.
+   pointer-events: none → No interfiere con clics ni interacciones.
+   ─────────────────────────────────────────────────────────────────────────── */
+.noise::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ── 11. Efectos de resplandor (Glow) ────────────────────────────────────────
+   Sombras de caja coloreadas que simulan un halo de luz alrededor del elemento.
+   Se usan en botones primarios y tarjetas destacadas para enfocar la atención.
+
+   .glow-green  → Botón principal "Explorar" y botones de acción verde
+   .glow-amber  → Botón de Apiturismo "Reservar tour"
+   .glow-purple → Disponible para elementos culturales/tradiciones
+   ─────────────────────────────────────────────────────────────────────────── */
+.glow-green {
+    box-shadow: 0 0 40px rgba(74, 222, 128, 0.3);
+}
+
+.glow-amber {
+    box-shadow: 0 0 40px rgba(251, 191, 36, 0.3);
+}
+
+.glow-purple {
+    box-shadow: 0 0 40px rgba(167, 139, 250, 0.3);
+}
+
+/* ── 12. Pill / Badge ────────────────────────────────────────────────────────
+   Etiqueta de categoría pequeña usada en el encabezado de cada sección.
+   Ejemplo: "🌿 Ecoturismo", "🍽️ Sabores Locales", "🐝 Apiturismo".
+   Se combina con colores de fondo y borde específicos de cada sección.
+   ─────────────────────────────────────────────────────────────────────────── */
+.pill {
+    @apply inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest;
+}
+
+/* ── 13. Layouts de sección ──────────────────────────────────────────────────
+   Dos variantes de fondo que alternan entre secciones para crear ritmo visual
+   y evitar que la página se vea monótona.
+
+   .section-dark  → bg #0d0d0d (casi negro puro) — secciones impares
+   .section-light → bg #111111 (negro ligeramente más claro) — secciones pares
+
+   py-24 → Espaciado vertical generoso (96px arriba y abajo) para respiración.
+   px-4  → Padding horizontal mínimo que se complementa con max-w-7xl mx-auto
+           en el contenedor interior.
+   ─────────────────────────────────────────────────────────────────────────── */
+.section-dark {
+    @apply bg-[#0d0d0d] py-24 px-4;
+}
+
+.section-light {
+    @apply bg-[#111111] py-24 px-4;
+}
