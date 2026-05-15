@@ -1,6 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import { Landmark } from 'lucide-react'
 
+// Local Assets
+import imgHistory from '../../../assets/history/mural-historia.jpeg'
+
 export default function CultureSection() {
   const { t } = useTranslation()
   const sitesList = t('sections.culture.sites.list', { returnObjects: true })
@@ -26,7 +29,7 @@ export default function CultureSection() {
           {/* Historia — big card */}
           <div className="lg:col-span-2 relative rounded-3xl overflow-hidden group" style={{ minHeight: '400px' }}>
             <img
-              src="https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=1000&q=85"
+              src={imgHistory.src}
               alt="Historia Durania"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />

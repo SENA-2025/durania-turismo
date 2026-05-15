@@ -1,6 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import { Footprints, Bird, Waves, Droplets, CloudRain } from 'lucide-react'
 
+// Local Assets
+import imgRivers from '../../../assets/nature/rivers-pools.jpg'
+import imgLaguna from '../../../assets/nature/laguna-barca.jpg'
+import imgCascada from '../../../assets/nature/cascada-saladito.jpg'
+
 const cards = [
   {
     key: 'hiking',
@@ -18,19 +23,19 @@ const cards = [
   {
     key: 'rivers',
     icon: Waves,
-    image: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=85',
+    image: imgRivers.src,
     accent: '#60a5fa',
   },
   {
     key: 'lagoon',
     icon: Droplets,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Arroyo_La_Barca-Durania%2C_Norte_de_Santander.jpg/800px-Arroyo_La_Barca-Durania%2C_Norte_de_Santander.jpg',
+    image: imgLaguna.src,
     accent: '#34d399',
   },
   {
     key: 'waterfall',
     icon: CloudRain,
-    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=85',
+    image: imgCascada.src,
     accent: '#a78bfa',
   },
 ]

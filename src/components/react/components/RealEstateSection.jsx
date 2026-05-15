@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
-import { LandPlot, TreePine, House, MapPinned, ArrowRight } from 'lucide-react'
+import { LandPlot, TreePine, Home, MapPin, ArrowRight } from 'lucide-react'
 
-const icons   = [LandPlot, TreePine, MapPinned, House]
+const icons   = [LandPlot, TreePine, MapPin, Home]
 const accents = ['#4ade80', '#34d399', '#22d3ee', '#a3e635']
 
 export default function RealEstateSection() {

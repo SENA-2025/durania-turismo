@@ -1,12 +1,20 @@
 import { useTranslation } from 'react-i18next'
 
+// Local Assets
+import imgMute from '../../../assets/gastronomy/mute-norte-santandereano.jpg'
+import imgCarnes from '../../../assets/gastronomy/carnes-vara.jpg'
+import imgCabrito from '../../../assets/gastronomy/cabrito-asado.jpg'
+import imgCafe from '../../../assets/gastronomy/cafe-durania.jpg'
+import imgHoney from '../../../assets/gastronomy/honey-products.jpg'
+import imgFishRio from '../../../assets/gastronomy/river-fish.jpg'
+
 const images = [
-  'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&q=85',
-  'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=85',
-  'https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600&q=85',
-  'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=600&q=85',
-  'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=600&q=85',
-  'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=85',
+  imgMute.src,
+  imgCarnes.src,
+  imgCabrito.src,
+  imgCafe.src,
+  imgHoney.src,
+  imgFishRio.src,
 ]
 
 export default function GastronomySection() {

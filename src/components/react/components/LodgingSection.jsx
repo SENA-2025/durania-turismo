@@ -1,11 +1,17 @@
 import { useTranslation } from 'react-i18next'
 import { ArrowUpRight } from 'lucide-react'
 
+// Local Assets
+import imgTouristFarms from '../../../assets/lodging/tourist-farms.jpg'
+import imgCountryInns from '../../../assets/lodging/country-inns.jpg'
+import imgMountainCabin from '../../../assets/lodging/mountain-cabin.jpg'
+import imgUrbanHotels from '../../../assets/lodging/urban-hotels.jpg'
+
 const images = [
-  'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=700&q=85',
-  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=85',
-  'https://images.unsplash.com/photo-1475855581690-80accde3ae2b?w=700&q=85',
-  'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=700&q=85',
+  imgTouristFarms.src,
+  imgCountryInns.src,
+  imgMountainCabin.src,
+  imgUrbanHotels.src,
 ]
 
 export default function LodgingSection() {

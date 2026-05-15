@@ -1,12 +1,16 @@
 import { useTranslation } from 'react-i18next'
 import { Sprout, Beef, Fish, TreePine } from 'lucide-react'
 
+// Local Assets
+import imgCattle from '../../../assets/agriculture/cattle.jpg'
+import imgFishFarming from '../../../assets/agriculture/fish-farming.jpg'
+
 const icons   = [Sprout, Beef, Fish, TreePine]
 const accents = ['#4ade80', '#f87171', '#60a5fa', '#a3e635']
 const images  = [
   'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=700&q=85',
-  'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=85',
-  'https://images.unsplash.com/photo-1514316454349-750a7fd3da3a?w=700&q=85',
+  imgCattle.src,
+  imgFishFarming.src,
   'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=700&q=85',
 ]
 

@@ -1,10 +1,15 @@
 import { useTranslation } from 'react-i18next'
 import { CheckCircle, ArrowRight } from 'lucide-react'
 
+// Local Assets
+import imgBeeFarm1 from '../../../assets/apiculture/bee-farm-1.jpg'
+import imgBeeFarm2 from '../../../assets/apiculture/bee-farm-2.jpg'
+import imgBeeFarming from '../../../assets/apiculture/bee-farming.jpg'
+
 /* Imágenes verificadas visualmente — apicultura real */
-const BEEKEEPER_IMG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Beekeeper_with_moveable_comb_hive.jpg/800px-Beekeeper_with_moveable_comb_hive.jpg'
-const HONEYCOMB_IMG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Honey_comb.jpg/800px-Honey_comb.jpg'
-const BEE_FLOWER_IMG = 'https://images.unsplash.com/photo-1568526381923-caf3fd520382?w=800&q=85'
+const BEEKEEPER_IMG = imgBeeFarm1.src
+const HONEYCOMB_IMG = imgBeeFarming.src
+const BEE_FLOWER_IMG = imgBeeFarm2.src
 
 export default function ApicultureSection() {
   const { t } = useTranslation()
