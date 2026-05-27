@@ -1,14 +1,79 @@
 ---
 // src/pages/index.astro
 import Layout from '../layouts/Layout.astro';
-import App from '../components/react/App.jsx';
+import Navbar from '../components/react/components/Navbar.jsx';
+import Hero from '../components/react/components/Hero.jsx';
+import Stats from '../components/react/components/Stats.jsx';
+import NatureSection from '../components/react/components/NatureSection.jsx';
+import GastronomySection from '../components/react/components/GastronomySection.jsx';
+import ApicultureSection from '../components/react/components/ApicultureSection.jsx';
+import AgricultureSection from '../components/react/components/AgricultureSection.jsx';
+import CultureSection from '../components/react/components/CultureSection.jsx';
+import EventsSection from '../components/react/components/EventsSection.jsx';
+import LodgingSection from '../components/react/components/LodgingSection.jsx';
+import RealEstateSection from '../components/react/components/RealEstateSection.jsx';
+import ContactSection from '../components/react/components/ContactSection.jsx';
+import Footer from '../components/react/components/Footer.jsx';
+import '../components/react/i18n.js'; // Inicializa i18n en el servidor para SSR
 import '../styles/global.css';
 
 const title = "Durania - La Tacita de Plata";
 ---
 
 <Layout title={title}>
-    <App client:load />
+    <!-- Navbar principal fijo -->
+    <Navbar client:load />
+
+    <!-- Flujo vertical de secciones -->
+    <main class="pt-20 w-full relative">
+        
+        <section id="inicio">
+            <Hero client:load />
+        </section>
+
+        <!-- Stats interpolado justo después de Hero -->
+        <Stats client:load />
+
+        <section id="naturaleza">
+            <NatureSection client:load />
+        </section>
+
+        <section id="gastronomia">
+            <GastronomySection client:load />
+        </section>
+
+        <section id="apiturismo">
+            <ApicultureSection client:load />
+        </section>
+
+        <section id="agricultura">
+            <AgricultureSection client:load />
+        </section>
+
+        <section id="cultura">
+            <CultureSection client:load />
+        </section>
+
+        <section id="ferias">
+            <EventsSection client:load />
+        </section>
+
+        <section id="hospedaje">
+            <LodgingSection client:load />
+        </section>
+
+        <section id="inmobiliario">
+            <RealEstateSection client:load />
+        </section>
+
+        <section id="contacto">
+            <ContactSection client:load />
+        </section>
+
+    </main>
+
+    <!-- Footer principal -->
+    <Footer client:load />
 </Layout>
 
 <style is:global>
@@ -23,3 +88,8 @@ const title = "Durania - La Tacita de Plata";
         overflow-y: auto;
     }
 </style>
+
+<script>
+    // Inicializar i18n en el cliente para hidratar las traducciones en todas las islas de React
+    import '../components/react/i18n.js';
+</script>

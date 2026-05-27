@@ -98,11 +98,7 @@ export default function Navbar() {
        * Cuando scrolled=true: aplica bg-black/80 con blur para legibilidad.
        * Cuando scrolled=false: transparente para no tapar el hero.
        */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-black/80 backdrop-blur-xl border-b border-white/10 py-3'
-          : 'bg-transparent py-5'
-      }`}>
+      <nav className="fixed top-0 left-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10 py-3">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
 
           {/* ── Logo — Bandera oficial de Durania (Wikimedia Commons, CC BY 3.0) ── */}

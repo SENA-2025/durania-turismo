@@ -1,0 +1,26 @@
+import{u as c,j as e}from"./useTranslation.PiamfWPL.js";import{c as s}from"./createLucideIcon.BqIBHrW1.js";import"./index.CVf8TyFT.js";import"./i18nInstance.BNxjHYN1.js";/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const l=s("Bird",[["path",{d:"M16 7h.01",key:"1kdx03"}],["path",{d:"M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20",key:"oj1oa8"}],["path",{d:"m20 7 2 .5-2 .5",key:"12nv4d"}],["path",{d:"M10 18v3",key:"1yea0a"}],["path",{d:"M14 17.75V21",key:"1pymcb"}],["path",{d:"M7 18a6 6 0 0 0 3.84-10.61",key:"1npnn0"}]]);/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const d=s("CloudRain",[["path",{d:"M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242",key:"1pljnt"}],["path",{d:"M16 14v6",key:"1j4efv"}],["path",{d:"M8 14v6",key:"17c4r9"}],["path",{d:"M12 16v6",key:"c8a4gj"}]]);/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const p=s("Droplets",[["path",{d:"M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z",key:"1ptgy4"}],["path",{d:"M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97",key:"1sl1rz"}]]);/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const h=s("Footprints",[["path",{d:"M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z",key:"1dudjm"}],["path",{d:"M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z",key:"l2t8xc"}],["path",{d:"M16 17h4",key:"1dejxt"}],["path",{d:"M4 13h4",key:"1bwh8b"}]]);/**
+ * @license lucide-react v0.378.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const m=s("Waves",[["path",{d:"M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1",key:"knzxuh"}],["path",{d:"M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1",key:"2jd2cc"}],["path",{d:"M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1",key:"rd2r6e"}]]),x={src:"/_astro/rivers-pools.Dh7pOb2d.jpg"},u={src:"/_astro/laguna-barca.CBlKTPJx.jpg"},g={src:"/_astro/cascada-saladito.C2mRFekF.jpg"},b=[{key:"hiking",icon:h,image:"https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=85",accent:"#4ade80",big:!0},{key:"birds",icon:l,image:"https://images.unsplash.com/photo-1444464666168-49d633b86797?w=800&q=85",accent:"#22d3ee"},{key:"rivers",icon:m,image:x.src,accent:"#60a5fa"},{key:"lagoon",icon:p,image:u.src,accent:"#34d399"},{key:"waterfall",icon:d,image:g.src,accent:"#a78bfa"}];function f(){const{t:a}=c();return e.jsx("section",{id:"naturaleza",className:"section-dark",children:e.jsxs("div",{className:"max-w-7xl mx-auto",children:[e.jsxs("div",{className:"mb-16",children:[e.jsx("span",{className:"pill bg-green-500/10 border border-green-500/30 text-green-400 mb-4 inline-flex",children:"🌿 Ecoturismo"}),e.jsx("h2",{className:"font-serif font-black text-white text-5xl md:text-6xl mb-4",style:{lineHeight:1},children:a("sections.nature.title")}),e.jsx("p",{className:"text-white/50 text-lg max-w-xl",children:a("sections.nature.subtitle")})]}),e.jsx("div",{className:"grid grid-cols-1 md:grid-cols-12 gap-4",children:b.map(({key:r,icon:i,image:n,accent:t,big:o})=>e.jsxs("div",{className:`relative overflow-hidden rounded-3xl card-hover group cursor-pointer ${o?"md:col-span-6 md:row-span-2 min-h-[480px]":"md:col-span-6 lg:col-span-3 min-h-[220px]"}`,children:[e.jsx("img",{src:n,alt:a(`sections.nature.${r}.title`),className:"absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"}),e.jsx("div",{className:"absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"}),e.jsx("div",{className:"absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-3xl",style:{background:`radial-gradient(circle at bottom left, ${t}, transparent 70%)`}}),e.jsx("div",{className:"absolute inset-0 rounded-3xl border border-transparent group-hover:border-opacity-60 transition-all duration-500",style:{borderColor:t+"40"}}),e.jsxs("div",{className:"absolute bottom-0 left-0 right-0 p-6",children:[e.jsx("div",{className:"w-10 h-10 rounded-2xl flex items-center justify-center mb-3",style:{background:t+"20",border:`1px solid ${t}40`},children:e.jsx(i,{className:"w-5 h-5",style:{color:t}})}),e.jsx("h3",{className:"font-bold text-white text-xl mb-2",children:a(`sections.nature.${r}.title`)}),e.jsx("p",{className:`text-white/60 text-sm leading-relaxed transition-all duration-300 ${o?"max-h-40":"max-h-0 overflow-hidden group-hover:max-h-40"}`,children:a(`sections.nature.${r}.desc`)})]})]},r))})]})})}export{f as default};
