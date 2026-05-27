@@ -58,6 +58,7 @@ const navLinks = [
   { key: 'apiculture',  href: '#apiturismo' },
   { key: 'agriculture', href: '#agricultura' },
   { key: 'culture',     href: '#cultura' },
+  { key: 'tour360',     href: '#tour360' },
   { key: 'events',      href: '#ferias' },
   { key: 'lodging',     href: '#hospedaje' },
   { key: 'realEstate',  href: '#inmobiliario' },

@@ -44,6 +44,7 @@ import GastronomySection from './components/GastronomySection'
 import ApicultureSection from './components/ApicultureSection'
 import AgricultureSection from './components/AgricultureSection'
 import CultureSection from './components/CultureSection'
+import TourVirtual360 from './components/TourVirtual360'
 import EventsSection from './components/EventsSection'
 import LodgingSection from './components/LodgingSection'
 import RealEstateSection from './components/RealEstateSection'
@@ -69,6 +70,7 @@ function App() {
         <ApicultureSection />
         <AgricultureSection />
         <CultureSection />
+        <TourVirtual360 />
         <EventsSection />
         <LodgingSection />
         <RealEstateSection />
