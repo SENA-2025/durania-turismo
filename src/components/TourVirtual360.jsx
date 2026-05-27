@@ -29,6 +29,22 @@ const lugares = [
     categoria: 'Patrimonio',
   },
   {
+    id: 'iglesia-exterior',
+    nombre: 'Basílica San José — Exterior',
+    descripcion: 'Vista exterior de la Basílica San José, patrimonio religioso de Durania.',
+    icono: '⛪',
+    imagen: '/img/panoramas/iglesia-exterior.jpg',
+    categoria: 'Patrimonio',
+  },
+  {
+    id: 'iglesia-interior',
+    nombre: 'Basílica San José — Interior',
+    descripcion: 'El interior de la Basílica San José, con su arquitectura colonial y altar central.',
+    icono: '🕍',
+    imagen: '/img/panoramas/iglesia-interior.jpg',
+    categoria: 'Patrimonio',
+  },
+  {
     id: 'escalinatas-silla',
     nombre: 'Escalinatas y la Silla Más Grande',
     descripcion: 'Punto turístico único: la silla más grande del municipio junto a los murales.',
@@ -119,7 +135,10 @@ export default function TourVirtual360() {
 
     setCargando(true)
 
-    import('pannellum').then((pannellum) => {
+    import('pannellum').then(() => {
+      const pannellum = window.pannellum
+      if (!pannellum) return
+
       if (pannellumRef.current) {
         pannellumRef.current.destroy()
         pannellumRef.current = null
@@ -148,11 +167,10 @@ export default function TourVirtual360() {
           textureSizeError: 'Imagen muy grande',
           unknownError: 'Error desconocido',
         },
-        uiText: {
-          loadButtonLabel: 'Ver en 360°',
-        },
-        onLoad: () => setCargando(false),
       })
+
+      pannellumRef.current.on('load', () => setCargando(false))
+      pannellumRef.current.on('error', () => setCargando(false))
     })
 
     return () => {
