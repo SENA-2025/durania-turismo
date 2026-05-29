@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { MapPin, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react'
-import 'pannellum/build/pannellum.css'
 
 const lugares = [
   {
@@ -135,43 +134,41 @@ export default function TourVirtual360() {
 
     setCargando(true)
 
-    import('pannellum').then(() => {
-      const pannellum = window.pannellum
-      if (!pannellum) return
+    const pannellum = window.pannellum
+    if (!pannellum) return
 
-      if (pannellumRef.current) {
-        pannellumRef.current.destroy()
-        pannellumRef.current = null
-      }
+    if (pannellumRef.current) {
+      pannellumRef.current.destroy()
+      pannellumRef.current = null
+    }
 
-      viewerRef.current.innerHTML = ''
+    viewerRef.current.innerHTML = ''
 
-      pannellumRef.current = pannellum.viewer(viewerRef.current, {
-        type: 'equirectangular',
-        panorama: lugarActual.imagen,
-        autoLoad: true,
-        autoRotate: -2,
-        showControls: true,
-        showFullscreenCtrl: true,
-        showZoomCtrl: true,
-        compass: false,
-        strings: {
-          loadButtonLabel: 'Ver en 360°',
-          loadingLabel: 'Cargando...',
-          bylineLabel: '',
-          noPanoramaError: 'No se encontró la imagen',
-          fileAccessError: 'Error al cargar',
-          malformedURLError: 'URL inválida',
-          iOS8WebGLError: 'WebGL requerido',
-          genericWebGLError: 'WebGL requerido',
-          textureSizeError: 'Imagen muy grande',
-          unknownError: 'Error desconocido',
-        },
-      })
-
-      pannellumRef.current.on('load', () => setCargando(false))
-      pannellumRef.current.on('error', () => setCargando(false))
+    pannellumRef.current = pannellum.viewer(viewerRef.current, {
+      type: 'equirectangular',
+      panorama: lugarActual.imagen,
+      autoLoad: true,
+      autoRotate: -2,
+      showControls: true,
+      showFullscreenCtrl: true,
+      showZoomCtrl: true,
+      compass: false,
+      strings: {
+        loadButtonLabel: 'Ver en 360°',
+        loadingLabel: 'Cargando...',
+        bylineLabel: '',
+        noPanoramaError: 'No se encontró la imagen',
+        fileAccessError: 'Error al cargar',
+        malformedURLError: 'URL inválida',
+        iOS8WebGLError: 'WebGL requerido',
+        genericWebGLError: 'WebGL requerido',
+        textureSizeError: 'Imagen muy grande',
+        unknownError: 'Error desconocido',
+      },
     })
+
+    pannellumRef.current.on('load', () => setCargando(false))
+    pannellumRef.current.on('error', () => setCargando(false))
 
     return () => {
       if (pannellumRef.current) {
