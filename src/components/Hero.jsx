@@ -67,16 +67,16 @@ import { ChevronDown, Play, MapPin } from 'lucide-react'
  */
 const slides = [
   {
-    img: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1920&q=90',
-    label: 'Naturaleza Viva',
+    img: '/img/hero-1.jpg',
+    label: 'Durania, Norte de Santander',
   },
   {
-    img: 'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?w=1920',
-    label: 'Laguna La Barca', // Foto real de Durania (Wikimedia Commons)
+    img: '/img/hero-2.jpg',
+    label: 'Parque Principal · Durania',
   },
   {
-    img: 'https://images.pexels.com/photos/1770809/pexels-photo-1770809.jpeg?w=1920',
-    label: 'Tierra Cafetera',
+    img: '/img/hero-3.jpg',
+    label: 'Entrada a Durania',
   },
 ]
 
