@@ -73,7 +73,13 @@ export default function Hero() {
   const [current, setCurrent] = useState(0)
   const [loaded,  setLoaded]  = useState(false)
 
-  useEffect(() => { setLoaded(true) }, [])
+  useEffect(() => {
+    setLoaded(true)
+    const interval = setInterval(() => {
+      setCurrent(p => (p + 1) % panoramas.length)
+    }, 8000)
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     if (!viewerRef.current || !window.pannellum) return
