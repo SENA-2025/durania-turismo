@@ -116,7 +116,7 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent pointer-events-none" style={{ zIndex: 1 }} />
 
       {/* Indicadores de panorama */}
-      <div className="absolute top-8 right-8 flex gap-2" style={{ zIndex: 20 }}>
+      <div className="absolute top-8 right-8 flex gap-2" style={{ zIndex: 100, pointerEvents: 'auto' }}>
         {panoramas.map((_p, i) => (
           <button
             key={i}
