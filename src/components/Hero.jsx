@@ -60,108 +60,64 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronDown, Play, MapPin } from 'lucide-react'
 
-/**
- * slides — Configuración de las 3 imágenes del slideshow.
- * - img:   URL de la imagen de fondo en alta resolución.
- * - label: Texto descriptivo que aparece en el badge de ubicación.
- */
-const slides = [
-  {
-    img: '/img/hero-1.jpg',
-    label: 'Durania, Norte de Santander',
-  },
-  {
-    img: '/img/hero-2.jpg',
-    label: 'Parque Principal · Durania',
-  },
-  {
-    img: '/img/hero-3.jpg',
-    label: 'Entrada a Durania',
-  },
+const panoramas = [
+  { img: '/img/hero-1.jpg',  label: 'Durania, Norte de Santander' },
+  { img: '/img/hero-2.jpg',  label: 'Parque Principal · Durania'  },
+  { img: '/img/hero-3.jpg',  label: 'Entrada a Durania'           },
 ]
 
 export default function Hero() {
   const { t } = useTranslation()
-
-  /** Índice del slide actualmente visible */
+  const viewerRef  = useRef(null)
+  const pannellumRef = useRef(null)
   const [current, setCurrent] = useState(0)
+  const [loaded,  setLoaded]  = useState(false)
 
-  /**
-   * loaded: false al inicio para hacer fade-in del contenido al cargar.
-   * Se pone true en el primer useEffect (después del primer render).
-   */
-  const [loaded, setLoaded] = useState(false)
-
-  /**
-   * intervalRef: guarda la referencia al setInterval para poder
-   * limpiarlo en el cleanup del useEffect y evitar memory leaks.
-   */
-  const intervalRef = useRef(null)
+  useEffect(() => { setLoaded(true) }, [])
 
   useEffect(() => {
-    // Activa el fade-in del contenido central al montar el componente
-    setLoaded(true)
+    if (!viewerRef.current || !window.pannellum) return
 
-    // Avanza al siguiente slide cada 5 segundos (loop circular con módulo)
-    intervalRef.current = setInterval(() => {
-      setCurrent(p => (p + 1) % slides.length)
-    }, 5000)
+    if (pannellumRef.current) {
+      pannellumRef.current.destroy()
+      pannellumRef.current = null
+    }
 
-    // Cleanup: limpia el intervalo cuando el componente se desmonta
-    return () => clearInterval(intervalRef.current)
-  }, []) // [] → solo se ejecuta una vez al montar
+    viewerRef.current.innerHTML = ''
+
+    pannellumRef.current = window.pannellum.viewer(viewerRef.current, {
+      type: 'equirectangular',
+      panorama: panoramas[current].img,
+      autoLoad: true,
+      autoRotate: -1.5,
+      autoRotateInactivityDelay: 2000,
+      showControls: false,
+      mouseZoom: false,
+      compass: false,
+      strings: { loadingLabel: '' },
+    })
+
+    return () => {
+      if (pannellumRef.current) {
+        pannellumRef.current.destroy()
+        pannellumRef.current = null
+      }
+    }
+  }, [current])
 
   return (
     <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
 
-      {/* ── Slideshow de imágenes ──────────────────────────────────────────
-       * Cada slide es una capa absoluta que ocupa todo el section.
-       * La opacidad controla cuál está visible: 1 = activo, 0 = oculto.
-       * El efecto de zoom se controla con transform: scale() en el img.
-       */}
-      {slides.map((s, i) => (
-        <div
-          key={i}
-          className="absolute inset-0 transition-opacity duration-1000"
-          style={{ opacity: i === current ? 1 : 0 }}
-        >
-          <img
-            src={s.img}
-            alt={s.label}
-            className="w-full h-full object-cover"
-            style={{
-              /* Slide activo: zoom más cercano. Inactivo: más alejado.
-               * La transición de 6s da el efecto "Ken Burns" suave. */
-              transform: i === current ? 'scale(1.05)' : 'scale(1.1)',
-              transition: 'transform 6s ease',
-            }}
-          />
-        </div>
-      ))}
+      {/* Visor 360° a pantalla completa */}
+      <div ref={viewerRef} className="absolute inset-0 w-full h-full" style={{ zIndex: 0 }} />
 
-      {/* ── Overlays de gradiente ────────────────────────────────────────────
-       * Dos capas de gradiente para asegurar legibilidad del texto:
-       * 1. Vertical: oscuro arriba y muy oscuro abajo (para el contenido).
-       * 2. Horizontal: oscuro a la izquierda (refuerza el texto centrado).
-       */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/90" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
+      {/* Overlays de gradiente para legibilidad del texto */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/90 pointer-events-none" style={{ zIndex: 1 }} />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent pointer-events-none" style={{ zIndex: 1 }} />
 
-      {/* ── Orbes decorativos ────────────────────────────────────────────────
-       * Círculos grandes con blur extremo (blur-3xl) que dan profundidad.
-       * animate-float: suben y bajan suavemente en loop infinito.
-       * delay-300 en el segundo orbe para que no estén sincronizados.
-       */}
-      <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-green-500/10 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-1/3 left-1/3 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl animate-float delay-300" />
-
-      {/* ── Indicadores de slide (puntos) ───────────────────────────────────
-       * El punto activo se expande horizontalmente (w-8 h-2 = pastilla).
-       * Los inactivos son cuadrados pequeños (w-2 h-2 = punto).
-       * Haciendo click se salta directamente al slide correspondiente.
-       */}
-      <div className="absolute top-8 right-8 flex gap-2 z-20">
-        {slides.map((_s, i) => (
+      {/* Indicadores de panorama */}
+      <div className="absolute top-8 right-8 flex gap-2" style={{ zIndex: 20 }}>
+        {panoramas.map((_p, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
@@ -172,11 +128,11 @@ export default function Hero() {
         ))}
       </div>
 
-      {/* ── Badge de ubicación del slide actual ─────────────────────────── */}
-      <div className="absolute top-24 left-1/2 -translate-x-1/2 z-20">
+      {/* Badge de ubicación */}
+      <div className="absolute top-24 left-1/2 -translate-x-1/2 pointer-events-none" style={{ zIndex: 20 }}>
         <span className="glass pill text-white/70 text-xs">
           <MapPin className="w-3 h-3 text-green-400" />
-          {slides[current].label} · Durania, Norte de Santander
+          {panoramas[current].label}
         </span>
       </div>
 
@@ -186,7 +142,7 @@ export default function Hero() {
        * escalonados para crear una secuencia de aparición natural:
        *   badge (0s) → título (0s) → subtítulo (0.2s) → desc (0.3s) → botones (0.4s)
        */}
-      <div className={`relative z-10 text-center px-4 max-w-5xl mx-auto transition-all duration-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`relative text-center px-4 max-w-5xl mx-auto transition-all duration-700 pointer-events-none ${loaded ? 'opacity-100' : 'opacity-0'}`} style={{ zIndex: 10 }}>
 
         {/* Badge categoría */}
         <div className="pill bg-green-500/20 border border-green-500/40 text-green-400 mx-auto mb-6 animate-fade-in">
@@ -209,7 +165,7 @@ export default function Hero() {
         </p>
 
         {/* Botones de acción */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-up delay-400">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-up delay-400 pointer-events-auto">
           {/* CTA principal: va a la sección de Naturaleza */}
           <a
             href="#naturaleza"
@@ -233,7 +189,7 @@ export default function Hero() {
        * Línea vertical que crece (h-12 → h-16) al hacer hover.
        * Invita visualmente al usuario a hacer scroll hacia abajo.
        */}
-      <a href="#naturaleza" className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-white/50 hover:text-white transition-colors group">
+      <a href="#naturaleza" className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 hover:text-white transition-colors group" style={{ zIndex: 20 }}>
         <span className="text-xs tracking-widest uppercase">Scroll</span>
         <div className="w-px h-12 bg-gradient-to-b from-white/50 to-transparent group-hover:h-16 transition-all" />
       </a>
@@ -243,7 +199,7 @@ export default function Hero() {
        * glass-dark + divide-x crea la separación entre columnas.
        * Los 4 datos clave dan contexto geográfico e informativo al visitante.
        */}
-      <div className="absolute bottom-0 left-0 right-0 z-10">
+      <div className="absolute bottom-0 left-0 right-0" style={{ zIndex: 20 }}>
         <div className="glass-dark grid grid-cols-4 divide-x divide-white/10">
           {[
             { val: '47 km',  label: 'de Cúcuta'     },
