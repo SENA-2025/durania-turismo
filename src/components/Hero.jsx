@@ -61,9 +61,11 @@ import { useTranslation } from 'react-i18next'
 import { ChevronDown, Play, MapPin } from 'lucide-react'
 
 const panoramas = [
-  { img: '/img/hero-1.jpg',  label: 'Durania, Norte de Santander' },
-  { img: '/img/hero-2.jpg',  label: 'Parque Principal · Durania'  },
-  { img: '/img/hero-3.jpg',  label: 'Entrada a Durania'           },
+  { img: '/img/hero-1.jpg',                        label: 'Durania, Norte de Santander'    },
+  { img: '/img/hero-2.jpg',                        label: 'Parque Principal · Durania'     },
+  { img: '/img/hero-3.jpg',                        label: 'Entrada a Durania'              },
+  { img: '/img/panoramas/iglesia-exterior.jpg',    label: 'Basílica San José · Exterior'   },
+  { img: '/img/panoramas/iglesia-interior.jpg',    label: 'Basílica San José · Interior'   },
 ]
 
 export default function Hero() {
