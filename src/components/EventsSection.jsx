@@ -2,10 +2,10 @@ import { useTranslation } from 'react-i18next'
 import { Calendar } from 'lucide-react'
 
 const images = [
-  '/img/ferias-durania.jpg',
-  '/img/ferias-durania.jpg',
-  '/img/ferias-durania.jpg',
-  '/img/ferias-durania.jpg',
+  '/img/cabalgata-ferias.jpg',
+  '/img/copla-ferias.jpg',
+  '/img/mercado-ferias.jpg',
+  '/img/comparsas-ferias.jpg',
 ]
 const accents = ['#f87171','#4ade80','#fbbf24','#34d399']
 
