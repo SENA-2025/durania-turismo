@@ -155,24 +155,24 @@
       "subtitle": "The municipality of Durania celebrates year-round with fairs, festivities and events that bring the entire community together.",
       "items": [
         {
-          "month": "December",
-          "title": "San Nicolás Festival",
-          "desc": "Patron saint celebrations honoring San Nicolás. Music, dancing, gastronomy and cultural events that fill the streets of the municipality with life."
-        },
-        {
-          "month": "Year-round",
-          "title": "Agricultural Fair",
-          "desc": "Exhibition and sale of local agricultural products: coffee, honey, fruits, vegetables and crafts made by the region's farmers."
+          "month": "June",
+          "title": "La Gran Cabalgata",
+          "desc": "Spectacular horseback parade through the streets of the municipality during Durania's Ferias y Fiestas celebrations."
         },
         {
           "month": "June",
-          "title": "Apitourism Festival",
-          "desc": "Celebration of the bee world with demonstrations, honey tastings, educational workshops and special tours to the region's apiaries."
+          "title": "Copla & Trova Festival",
+          "desc": "Music festival at the Main Park where trovadores and copleros showcase their talent in a night full of culture and tradition."
         },
         {
-          "month": "Season",
-          "title": "Coffee Harvest",
-          "desc": "During harvest season, farms open their doors for visitors to participate in coffee bean collection."
+          "month": "June",
+          "title": "Mercado Campesino",
+          "desc": "Exhibition and sale of local farm products: coffee, honey, fruits, vegetables and crafts made by the region's farmers."
+        },
+        {
+          "month": "June",
+          "title": "Desfile de Comparsas",
+          "desc": "Traditional parade of comparsas that fills the streets with color, music and joy during the patron saint festivities."
         }
       ]
     },

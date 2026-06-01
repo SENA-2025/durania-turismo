@@ -155,24 +155,24 @@
       "subtitle": "El municipio de Durania celebra todo el año con ferias, festividades y eventos que reúnen a toda la comunidad.",
       "items": [
         {
-          "month": "Diciembre",
-          "title": "Fiestas de San Nicolás",
-          "desc": "Festividades patronales en honor a San Nicolás. Música, baile, gastronomía y eventos culturales que llenan de vida las calles del municipio."
-        },
-        {
-          "month": "Todo el año",
-          "title": "Feria Agrícola",
-          "desc": "Exposición y venta de productos agropecuarios locales: café, miel, frutas, verduras y artesanías elaboradas por los campesinos de la región."
+          "month": "Junio",
+          "title": "La Gran Cabalgata",
+          "desc": "Espectacular cabalgata que recorre las calles del municipio con jinetes, caballos y la alegría de las Ferias y Fiestas de Durania."
         },
         {
           "month": "Junio",
-          "title": "Festival de Apiturismo",
-          "desc": "Celebración del mundo apícola con demostraciones, catas de miel, talleres educativos y tours especiales a los apiarios de la región."
+          "title": "Festival de Copla & Trova",
+          "desc": "Festival musical en el Parque Principal donde los trovadores y copleros muestran su talento en una noche llena de cultura y tradición."
         },
         {
-          "month": "Temporada",
-          "title": "Cosecha Cafetera",
-          "desc": "Durante la temporada de cosecha, las fincas abren sus puertas para que los visitantes participen en la recolección del grano de café."
+          "month": "Junio",
+          "title": "Mercado Campesino",
+          "desc": "Exposición y venta de productos del campo: café, miel, frutas, verduras y artesanías elaboradas por los campesinos de la región."
+        },
+        {
+          "month": "Junio",
+          "title": "Desfile de Comparsas",
+          "desc": "Tradicional desfile de comparsas que llena de color, música y alegría las calles del municipio durante las fiestas patronales."
         }
       ]
     },
