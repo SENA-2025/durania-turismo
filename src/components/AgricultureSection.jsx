@@ -31,12 +31,15 @@ export default function AgricultureSection() {
             </h2>
             <p className="text-white/40 leading-relaxed mb-8">{t('sections.agriculture.subtitle')}</p>
 
-            {/* Big showcase image */}
+            {/* Big showcase video */}
             <div className="rounded-3xl overflow-hidden h-72">
-              <img
-                src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=85"
-                alt="Campo Durania"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+              <video
+                src="/img/agricultura-video.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
               />
             </div>
           </div>
