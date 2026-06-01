@@ -12,7 +12,7 @@ const cards = [
   {
     key: 'birds',
     icon: Bird,
-    image: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?w=800',
+    image: '/img/ave-durania.jpeg',
     accent: '#22d3ee',
   },
   {
