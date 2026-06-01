@@ -2,10 +2,10 @@ import { useTranslation } from 'react-i18next'
 import { Calendar } from 'lucide-react'
 
 const images = [
-  'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=700&q=85',
-  'https://images.pexels.com/photos/2252584/pexels-photo-2252584.jpeg?w=700',
-  'https://images.pexels.com/photos/5247943/pexels-photo-5247943.jpeg?w=700',
-  'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=700&q=85',
+  '/img/ferias-durania.jpg',
+  '/img/ferias-durania.jpg',
+  '/img/ferias-durania.jpg',
+  '/img/ferias-durania.jpg',
 ]
 const accents = ['#f87171','#4ade80','#fbbf24','#34d399']
 
@@ -25,6 +25,15 @@ export default function EventsSection() {
           <h2 className="font-serif font-black text-white text-5xl md:text-6xl" style={{ lineHeight: 1 }}>
             {t('sections.events.title')}
           </h2>
+        </div>
+
+        {/* Afiche oficial Ferias & Fiestas */}
+        <div className="flex justify-center mb-12">
+          <img
+            src="/img/ferias-durania.jpg"
+            alt="Ferias y Fiestas Durania 2026"
+            className="rounded-3xl shadow-2xl shadow-red-500/20 max-h-[600px] object-contain"
+          />
         </div>
 
         {/* Horizontal scroll cards */}
