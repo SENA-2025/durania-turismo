@@ -6,6 +6,7 @@ const cards = [
     key: 'hiking',
     icon: Footprints,
     image: '/img/panoramas/naturaleza-sendero-1.jpg',
+    video: '/img/senderismo-video.mp4',
     accent: '#4ade80',
     big: true,
   },
