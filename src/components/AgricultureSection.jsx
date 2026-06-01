@@ -32,7 +32,7 @@ export default function AgricultureSection() {
             <p className="text-white/40 leading-relaxed mb-8">{t('sections.agriculture.subtitle')}</p>
 
             {/* Big showcase video */}
-            <div className="rounded-3xl overflow-hidden h-72">
+            <div className="rounded-3xl overflow-hidden" style={{ height: '480px' }}>
               <video
                 src="/img/agricultura-video.mp4"
                 autoPlay
