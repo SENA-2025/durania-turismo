@@ -2,10 +2,10 @@ import { useTranslation } from 'react-i18next'
 import { ArrowUpRight } from 'lucide-react'
 
 const images = [
-  'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?w=700',   // Fincas Turísticas
-  'https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?w=700',     // Posadas Campestres
-  'https://images.pexels.com/photos/803975/pexels-photo-803975.jpeg?w=700',     // Cabañas en la Montaña
-  'https://images.pexels.com/photos/2462015/pexels-photo-2462015.jpeg?w=700',   // Hoteles Casco Urbano
+  '/img/panoramas/finca-perla-1.jpg',       // Fincas Turísticas
+  '/img/panoramas/hotel-campestre-1.jpg',   // Posadas Campestres
+  '/img/panoramas/hotel-manantial-1.jpg',   // Cabañas en la Montaña
+  '/img/panoramas/hotel-rous-1.jpg',        // Hoteles Casco Urbano
 ]
 
 export default function LodgingSection() {
