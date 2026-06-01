@@ -5,32 +5,32 @@ const cards = [
   {
     key: 'hiking',
     icon: Footprints,
-    image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=85',
+    image: '/img/panoramas/naturaleza-sendero-1.jpg',
     accent: '#4ade80',
     big: true,
   },
   {
     key: 'birds',
     icon: Bird,
-    image: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=800&q=85',
+    image: '/img/panoramas/naturaleza-paisaje-1.jpg',
     accent: '#22d3ee',
   },
   {
     key: 'rivers',
     icon: Waves,
-    image: 'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?w=800',
+    image: '/img/panoramas/laguna-2.jpg',
     accent: '#60a5fa',
   },
   {
     key: 'lagoon',
     icon: Droplets,
-    image: 'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?w=800',
+    image: '/img/panoramas/laguna-1.jpg',
     accent: '#34d399',
   },
   {
     key: 'waterfall',
     icon: CloudRain,
-    image: 'https://images.pexels.com/photos/2743287/pexels-photo-2743287.jpeg?w=800',
+    image: '/img/panoramas/naturaleza-paisaje-2.jpg',
     accent: '#a78bfa',
   },
 ]
