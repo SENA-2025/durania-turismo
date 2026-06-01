@@ -2,9 +2,9 @@ import { useTranslation } from 'react-i18next'
 import { CheckCircle, ArrowRight } from 'lucide-react'
 
 /* Imágenes verificadas visualmente — apicultura real (Pexels / Unsplash) */
-const BEEKEEPER_IMG = 'https://images.pexels.com/photos/5247943/pexels-photo-5247943.jpeg?w=800'
-const HONEYCOMB_IMG = 'https://images.pexels.com/photos/302163/pexels-photo-302163.jpeg?w=800'
-const BEE_FLOWER_IMG = 'https://images.unsplash.com/photo-1568526381923-caf3fd520382?w=800&q=85'
+const BEEKEEPER_IMG = '/img/panoramas/apicultura-1.jpg'
+const HONEYCOMB_IMG = '/img/panoramas/apicultura-2.jpg'
+const BEE_FLOWER_IMG = '/img/panoramas/apicultura-3.jpg'
 
 export default function ApicultureSection() {
   const { t } = useTranslation()
