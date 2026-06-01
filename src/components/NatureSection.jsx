@@ -12,7 +12,7 @@ const cards = [
   {
     key: 'birds',
     icon: Bird,
-    image: '/img/panoramas/naturaleza-paisaje-1.jpg',
+    image: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?w=800',
     accent: '#22d3ee',
   },
   {
@@ -30,7 +30,7 @@ const cards = [
   {
     key: 'waterfall',
     icon: CloudRain,
-    image: '/img/panoramas/naturaleza-paisaje-2.jpg',
+    image: 'https://images.pexels.com/photos/2743287/pexels-photo-2743287.jpeg?w=800',
     accent: '#a78bfa',
   },
 ]
